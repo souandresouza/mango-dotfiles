@@ -103,6 +103,7 @@
 │   └── style.css
 ├── zathura
 │   └── zathurarc
+├── install.sh
 ├── LICENSE
 ├── README.md
 └── structure_update.py
