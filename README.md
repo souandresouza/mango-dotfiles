@@ -47,13 +47,10 @@ O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar
 ## Componentes
 
 - MangoWM - compositor
-- waybar - barra de status
-- mako - notificações
-- fuzzel - launcher
+- dms (DankMaterialShell) - shell desktop (barra, launcher, notificações, controle central)
+- matugen - geração de temas Material
 - kitty - terminal
 - awww (antigo swww) - wallpapers
-- hypridle - gerenciamento de inatividade
-- hyprlock - bloqueio de tela
 - hyprpicker - seletor de cores
 
 ## 🔒 Permissões Configuradas
@@ -65,10 +62,6 @@ O script automaticamente torna executáveis:
 -   `~/.config/scripts/colors/*.sh`
 
 -   `~/.config/mango/scripts/*.sh`
-
--   `~/.config/waybar/scripts/*.sh`
-
--   `~/.config/waybar/scripts/*.py`
 
 ### Erro: "You're not on an Arch-based distro"
 
@@ -87,14 +80,11 @@ O script automaticamente torna executáveis:
 ~/.config/
 ├── cava/
 ├── fastfetch/
-├── fuzzel/
 ├── mango/
 ├── kitty/
 ├── music-tui/
 ├── scripts/
-├── mako/
 ├── wallpapers/
-├── waybar/
 └── zathura/
 
 ~/mango-dotfiles/

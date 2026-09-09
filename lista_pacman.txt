@@ -7,17 +7,12 @@
 # --- Compositor e núcleo do WM ---
 awww
 dms-shell
-hypridle
-hyprlock
 hyprpicker
-mako
-fuzzel
 kitty
 matugen
 qt6-multimedia
 quickshell
 swaybg
-wlsunset
 wtype
 xdg-desktop-portal-wlr
 polkit-kde-agent
@@ -50,7 +45,6 @@ blueman
 bluetui
 
 # --- Clipboard e screenshots ---
-cliphist
 wl-clipboard
 grim
 slurp
