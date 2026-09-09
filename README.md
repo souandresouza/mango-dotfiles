@@ -77,6 +77,7 @@ O script automaticamente torna executáveis:
 **Solução**: Verifique se o diretório `~/mango-dotfiles` existe ou se você tem acesso à internet para cloná-lo.
 
 ## Estrutura
+```
 ~/.config/
 ├── cava/
 ├── fastfetch/
@@ -94,3 +95,4 @@ O script automaticamente torna executáveis:
 ├── assets/
 │   └── user.png
 └── [diretórios de configuração]
+```
