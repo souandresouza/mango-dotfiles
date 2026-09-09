@@ -10,6 +10,53 @@
 ## MangoWM
 > Configuração pessoal para o compositor wayland [MangoWM](https://github.com/mangowm/mango).
 
+## Instalação
+```bash
+git clone https://github.com/souandresouza/mango-dotfiles.git
+cd mango-dotfiles
+chmod +x install.sh
+./install.sh
+```
+**Siga as instruções interativas**
+
+    -   O script verificará as dependências
+
+    -   Se necessário, perguntará se deseja instalar o yay
+
+    -   Verificará a existência do diretório de dotfiles
+
+    -   Se ausente, oferecerá para clonar do repositório
+
+    -   Copiará automaticamente as configurações
+
+    -   Aplicará as permissões necessárias
+
+## 🔒 Permissões Configuradas
+
+O script automaticamente torna executáveis:
+
+-   `~/.config/scripts/*.sh`
+
+-   `~/.config/scripts/colors/*.sh`
+
+-   `~/.config/mango/scripts/*.sh`
+
+-   `~/.config/waybar/scripts/*.sh`
+
+-   `~/.config/waybar/scripts/*.py`
+
+### Erro: "You're not on an Arch-based distro"
+
+**Solução**: O script só funciona em distribuições baseadas em Arch. Use um sistema Arch Linux ou derivado.
+
+### Erro: Permissão negada
+
+**Solução**: Certifique-se de ter privilégios sudo e permissão para executar o script.
+
+### Erro: Diretório não encontrado
+
+**Solução**: Verifique se o diretório `~/mango-dotfiles` existe ou se você tem acesso à internet para cloná-lo.
+
 ## Estrutura
 <!-- TREE_START -->
 ```
