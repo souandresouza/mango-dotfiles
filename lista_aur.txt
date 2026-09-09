@@ -1,5 +1,7 @@
+# Pacotes do AUR necessarios paras as configs do MangoWM
 mangowm-git
 waybar-git
-elio
 python-pywal
 wal-telegram-git
+elio
+music-tui

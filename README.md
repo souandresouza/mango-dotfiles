@@ -37,10 +37,14 @@ chmod +x install.sh
 
 ## Dependências
 As dependências estão separadas em:
-- `lista_pacman.txt` - pacotes dos repositórios oficiais
-- `lista_aur.txt` - pacotes disponíveis no AUR
+- `lista_pacman.txt` - pacotes essenciais dos repositórios oficiais (comentado por categoria)
+- `lista_aur.txt` - pacotes essenciais disponíveis no AUR
 
 O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar as configurações.
+
+> **Nota:** as listas contêm apenas o necessário para o MangoWM e seus scripts funcionarem.
+> Pacotes de hardware/drivers/kernel, sistema e aplicativos pessoais foram removidos de propósito —
+> cada instalação deve configurá-los conforme suas próprias necessidades.
 
 ## Componentes
 
