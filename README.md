@@ -8,7 +8,7 @@
 </div>
 
 ## MangoWM
-> [MangoWM](https://github.com/mangowm/mango) é tão leve quanto o dwl e pode ser construído completamente dentro de alguns segundos. Apesar disso, a Mango não compromete a funcionalidade.
+> Configuração pessoal para o compositor wayland [MangoWM](https://github.com/mangowm/mango).
 
 ## Estrutura
 <!-- TREE_START -->
