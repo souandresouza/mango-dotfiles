@@ -114,10 +114,11 @@ if [[ ! -d "$DOTFILES" ]]; then
 fi
 
 # Instala pacotes das listas
+# Filtra linhas de comentário (#) e vazias antes de passar ao pacman/yay
 if [[ -f "$DOTFILES/lista_pacman.txt" ]]; then
     log_info "Instalando pacotes dos repositórios oficiais..."
-    # shellcheck disable=SC2046
-    sudo pacman -S --needed --noconfirm $(cat "$DOTFILES/lista_pacman.txt")
+    mapfile -t pacman_pkgs < <(grep -vE '^\s*(#|$)' "$DOTFILES/lista_pacman.txt")
+    sudo pacman -S --needed --noconfirm "${pacman_pkgs[@]}"
     log_ok "Pacotes oficiais instalados."
 else
     log_warn "lista_pacman.txt não encontrada em $DOTFILES"
@@ -125,8 +126,8 @@ fi
 
 if [[ -f "$DOTFILES/lista_aur.txt" ]]; then
     log_info "Instalando pacotes do AUR..."
-    # shellcheck disable=SC2046
-    yay -S --needed --noconfirm $(cat "$DOTFILES/lista_aur.txt")
+    mapfile -t aur_pkgs < <(grep -vE '^\s*(#|$)' "$DOTFILES/lista_aur.txt")
+    yay -S --needed --noconfirm "${aur_pkgs[@]}"
     log_ok "Pacotes do AUR instalados."
 else
     log_warn "lista_aur.txt não encontrada em $DOTFILES"
