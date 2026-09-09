@@ -23,11 +23,15 @@ chmod +x install.sh
 
     -   Se necessário, perguntará se deseja instalar o yay
 
+    -   Instalará os pacotes das listas `lista_pacman.txt` e `lista_aur.txt`
+
     -   Verificará a existência do diretório de dotfiles
 
     -   Se ausente, oferecerá para clonar do repositório
 
     -   Copiará automaticamente as configurações
+
+    -   **Fará backup** das configurações existentes antes de sobrescrever (salvo em `~/.config/mango-dotfiles-backup-*`)
 
     -   Aplicará as permissões necessárias
 
@@ -36,7 +40,7 @@ As dependências estão separadas em:
 - `lista_pacman.txt` - pacotes dos repositórios oficiais
 - `lista_aur.txt` - pacotes disponíveis no AUR
 
-O `install.sh` verifica as dependências antes de aplicar as configurações.
+O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar as configurações.
 
 ## Componentes
 

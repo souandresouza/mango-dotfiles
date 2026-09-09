@@ -1,0 +1,7 @@
+# Configurações antigas movidas para backup durante a instalação
+.mango-dotfiles-backup-*/
+
+# Arquivos temporários
+*.swp
+*~
+.DS_Store

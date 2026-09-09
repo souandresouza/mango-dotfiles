@@ -1,7 +1,5 @@
-elio
 mangowm-git
+waybar-git
+elio
 python-pywal
 wal-telegram-git
-waybar-git
-yay-bin
-yay-bin-debug
