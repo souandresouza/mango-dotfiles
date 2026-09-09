@@ -42,9 +42,7 @@ As dependências estão separadas em:
 
 O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar as configurações.
 
-> **Nota:** as listas contêm apenas o necessário para o MangoWM e seus scripts funcionarem.
-> Pacotes de hardware/drivers/kernel, sistema e aplicativos pessoais foram removidos de propósito —
-> cada instalação deve configurá-los conforme suas próprias necessidades.
+> **Nota:** As listas refletem os pacotes utilizados na minha configuração pessoal. Remova ou substitua o que não fizer sentido para você.
 
 ## Componentes
 
