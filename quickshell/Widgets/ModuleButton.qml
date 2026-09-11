@@ -25,7 +25,7 @@ Item {
 	property int padding: Theme.modulePadding
 
 	implicitWidth: contentRow.width + (framed ? padding * 2 : padding)
-	implicitHeight: contentRow.height + Theme.borderWidth * 2
+	implicitHeight: Theme.contentHeight
 
 	readonly property color frameColor: {
 		if (active)
