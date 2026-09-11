@@ -47,7 +47,8 @@ O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar
 ## Componentes
 
 - MangoWM - compositor
-- dms (DankMaterialShell) - shell desktop (barra, launcher, notificações, controle central)
+- cadrocbar - barra Quickshell (barra, launcher, central de controle, media, workspace, lock screen)
+- dms (DankMaterialShell) - shell desktop
 - matugen - geração de temas Material
 - kitty - terminal
 - awww (antigo swww) - wallpapers
@@ -58,6 +59,8 @@ O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar
 O script automaticamente torna executáveis:
 
 -   `~/.config/scripts/*.sh`
+
+-   `~/.config/scripts/*.py`
 
 -   `~/.config/scripts/colors/*.sh`
 
@@ -81,9 +84,10 @@ O script automaticamente torna executáveis:
 ├── cava/
 ├── fastfetch/
 ├── mango/
+├── quickshell/       <- cadrocbar (barra)
 ├── kitty/
 ├── music-tui/
-├── scripts/
+├── scripts/          <- scripts do cadrocbar e do sistema
 ├── wallpapers/
 └── zathura/
 

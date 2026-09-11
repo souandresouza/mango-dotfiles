@@ -144,7 +144,7 @@ mkdir -p "$HOME/.config"
 # Fazer backup de configurações existentes
 backup_dir="$HOME/.config/mango-dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
-CONFIG_DIRS=(cava fastfetch mango kitty music-tui scripts wallpapers zathura)
+CONFIG_DIRS=(cava fastfetch mango quickshell kitty music-tui scripts wallpapers zathura)
 
 for dir in "${CONFIG_DIRS[@]}"; do
     if [[ -d "$DOTFILES/$dir" ]]; then
@@ -181,6 +181,7 @@ log_info "Definindo permissões de execução..."
 chmod +x "$HOME/.config/scripts"/*.sh 2>/dev/null || true
 chmod +x "$HOME/.config/scripts/colors"/*.sh 2>/dev/null || true
 chmod +x "$HOME/.config/mango/scripts"/*.sh 2>/dev/null || true
+chmod +x "$HOME/.config/scripts"/*.py 2>/dev/null || true
 
 log_ok "Permissões definidas"
 
