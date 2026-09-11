@@ -48,7 +48,6 @@ O `install.sh` instala automaticamente os pacotes dessas listas antes de aplicar
 
 - MangoWM - compositor
 - cadrocbar - barra Quickshell (barra, launcher, central de controle, media, workspace, lock screen)
-- dms (DankMaterialShell) - shell desktop
 - matugen - geração de temas Material
 - kitty - terminal
 - awww (antigo swww) - wallpapers

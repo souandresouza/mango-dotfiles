@@ -6,7 +6,6 @@
 
 # --- Compositor e núcleo do WM ---
 awww
-dms-shell
 hyprpicker
 kitty
 matugen

@@ -159,6 +159,13 @@ Item {
 		}
 	}
 
+	Component.onCompleted: {
+		PopupService.controlCenter = controlCenterPopup;
+		PopupService.media = mediaPopup;
+		PopupService.calendar = calendarPopup;
+		PopupService.powerMenu = powerMenuPopup;
+	}
+
 	Connections {
 		target: calendarPopup
 		function onOpened() { barRoot.closeOtherPopouts(calendarPopup) }
