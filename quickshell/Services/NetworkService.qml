@@ -40,7 +40,7 @@ Singleton {
 				network.ssid = j.ssid || "";
 				network.signal = Number(j.signal) || 0;
 				network.wifiEnabled = j.wifi_enabled === "yes";
-			} catch (e) {}
+			} catch (e) { console.warn("[rede] falha ao parsear output:", e.message); }
 		}
 	}
 

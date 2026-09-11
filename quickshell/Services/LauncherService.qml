@@ -92,6 +92,16 @@ Singleton {
 		launcher.close();
 	}
 
+	function parseExec(exec) {
+		const tokens = [];
+		const re = /"([^"]*)"|'([^']*)'|\S+/g;
+		const raw = (exec || "").replace(/%[a-zA-Z%]/g, "").trim();
+		let m;
+		while ((m = re.exec(raw)) !== null)
+			tokens.push(m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[0]);
+		return tokens;
+	}
+
 	function launch(entry) {
 		if (!entry)
 			return;
@@ -99,12 +109,10 @@ Singleton {
 			launcher.copyItem(entry);
 			return;
 		}
-		let cmd = (entry.exec || entry.name).replace(/%[a-zA-Z]/g, "").trim();
-		if (cmd.length === 0)
-			cmd = entry.name;
-		const args = entry.terminal
-			? ["kitty", "-e", "sh", "-c", cmd]
-			: ["sh", "-c", cmd];
+		const argv = launcher.parseExec(entry.exec);
+		if (argv.length === 0)
+			argv.push(entry.name || "sh");
+		const args = entry.terminal ? ["kitty", "-e"].concat(argv) : argv;
 		Quickshell.execDetached(args);
 		launcher.close();
 	}
@@ -173,7 +181,7 @@ Singleton {
 					launcher.wal = j.wal;
 					console.log("WAL set");
 				}
-			} catch (e) { /* ignore */ }
+			} catch (e) { console.warn("[launcher] falha ao parsear output:", e.message); }
 		}
 	}
 

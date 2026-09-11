@@ -75,7 +75,7 @@ Singleton {
 				if (parsed.monitors !== undefined)
 					mango.monitors = parsed.monitors;
 				mango.changed();
-			} catch (e) {}
+			} catch (e) { console.warn("[mango] falha ao parsear output:", e.message); }
 		}
 	}
 }

@@ -35,7 +35,7 @@ Singleton {
 				const j = JSON.parse(line);
 				bluetooth.powered = j.powered === "yes";
 				bluetooth.connected = Number(j.connected) || 0;
-			} catch (e) {}
+			} catch (e) { console.warn("[bluetooth] falha ao parsear output:", e.message); }
 		}
 	}
 

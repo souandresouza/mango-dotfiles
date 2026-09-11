@@ -1,13 +1,18 @@
 import QtQuick
-import Quickshell
-import Quickshell.Io
 import qs.Common
+import qs.Services
 import qs.Widgets
 
 Item {
 	id: root
 
 	property real sf: 1
+
+	readonly property var player: MprisService.player
+
+	function send(id, cmd, value) {
+		MprisService.send(id, cmd, value);
+	}
 
 	function fmtTime(us) {
 		const totalSec = Math.max(0, Math.floor((us || 0) / 1000000));
@@ -17,70 +22,6 @@ Item {
 		const mm = String(m).padStart(2, "0");
 		const ss = String(s).padStart(2, "0");
 		return h > 0 ? h + ":" + mm + ":" + ss : mm + ":" + ss;
-	}
-
-	property var players: []
-
-	readonly property var player: {
-		for (let i = 0; i < players.length; i++) {
-			if (players[i].status === "Playing")
-				return players[i];
-		}
-		return players.length ? players[0] : null;
-	}
-
-	readonly property bool playing: player !== null && player.status === "Playing"
-
-	function send(id, cmd, value) {
-		const args = [Theme.binDir + "/mpris.py", "--action", id, cmd];
-		if (value !== undefined)
-			args.push(value);
-		Quickshell.execDetached(args);
-	}
-
-	function volumeSet(v) {
-		if (player)
-			send(player.id, "volume", String(Math.max(0, Math.min(1, v))));
-	}
-
-	function togglePlayback() {
-		if (!player)
-			return;
-		if (player.canControl)
-			send(player.id, "play-pause");
-		else if (playing)
-			send(player.id, "pause");
-		else
-			send(player.id, "play");
-	}
-
-	Timer {
-		interval: 1000
-		repeat: true
-		running: true
-		triggeredOnStart: true
-		onTriggered: popupProcess.exec([Theme.binDir + "/mpris.py"])
-	}
-
-	Process {
-		id: popupProcess
-
-		running: false
-		stdout: StdioCollector {
-			id: coll
-			waitForEnd: true
-		}
-
-		onExited: () => {
-			const line = coll.text.toString().trim();
-			if (line.length === 0)
-				return;
-			try {
-				const j = JSON.parse(line);
-				if (Array.isArray(j))
-					root.players = j;
-			} catch (e) {}
-		}
 	}
 
 	Column {
@@ -104,7 +45,7 @@ Item {
 			color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.6)
 			border.color: Theme.moduleHover
 			border.width: 1
-			visible: root.player !== null
+			visible: MprisService.player !== null
 
 			Row {
 				anchors.fill: parent
@@ -127,7 +68,7 @@ Item {
 						Image {
 							id: artIcon
 							anchors.fill: parent
-							source: root.player ? root.player.artUrl : ""
+							source: MprisService.player ? MprisService.player.artUrl : ""
 							asynchronous: true
 							smooth: true
 							fillMode: Image.PreserveAspectCrop
@@ -152,9 +93,9 @@ Item {
 							width: Theme.roundScaled(22, root.sf)
 							height: Theme.roundScaled(22, root.sf)
 							padding: Theme.roundScaled(4, root.sf)
-							visible: root.player ? root.player.canGoPrevious : false
+							visible: MprisService.player ? MprisService.player.canGoPrevious : false
 							IconText { glyph: "\uf048" }
-							onClicked: root.send(root.player.id, "previous")
+							onClicked: root.send(MprisService.player.id, "previous")
 						}
 
 						ModuleButton {
@@ -164,21 +105,21 @@ Item {
 							padding: Theme.roundScaled(4, root.sf)
 							contentCentered: true
 							accentColor: Theme.accent
-							active: root.playing
+							active: MprisService.playing
 							IconText {
-								glyph: root.playing ? "\uf04c" : "\uf04b"
-								glyphColor: root.playing ? Theme.accent : Theme.fg
+								glyph: MprisService.playing ? "\uf04c" : "\uf04b"
+								glyphColor: MprisService.playing ? Theme.accent : Theme.fg
 							}
-							onClicked: root.togglePlayback()
+							onClicked: MprisService.togglePlayback(MprisService.player)
 						}
 
 						ModuleButton {
 							width: Theme.roundScaled(22, root.sf)
 							height: Theme.roundScaled(22, root.sf)
 							padding: Theme.roundScaled(4, root.sf)
-							visible: root.player ? root.player.canGoNext : false
+							visible: MprisService.player ? MprisService.player.canGoNext : false
 							IconText { glyph: "\uf051" }
-							onClicked: root.send(root.player.id, "next")
+							onClicked: root.send(MprisService.player.id, "next")
 						}
 					}
 				}
@@ -190,7 +131,7 @@ Item {
 
 					Text {
 						width: parent.width
-						text: root.player ? root.player.title || "" : ""
+						text: MprisService.player ? MprisService.player.title || "" : ""
 						font.family: Theme.fontFamily
 						font.pixelSize: Theme.roundScaled(Theme.fontSizeLarge, root.sf)
 						font.weight: Font.Bold
@@ -201,9 +142,9 @@ Item {
 
 					Text {
 						width: parent.width
-						text: root.player ? [
-							root.player.artist,
-							root.player.album
+						text: MprisService.player ? [
+							MprisService.player.artist,
+							MprisService.player.album
 						].filter(x => x && x.length > 0).join("   ") : ""
 						font.family: Theme.fontFamily
 						font.pixelSize: Theme.roundScaled(Theme.fontSizeSmall, root.sf)
@@ -216,7 +157,7 @@ Item {
 
 		Text {
 			width: parent.width
-			text: root.player === null ? "Nenhuma mídia em reprodução" : ""
+			text: MprisService.player === null ? "Nenhuma mídia em reprodução" : ""
 			font.family: Theme.fontFamily
 			font.pixelSize: Theme.roundScaled(Theme.fontSize, root.sf)
 			color: Theme.stone
@@ -226,11 +167,11 @@ Item {
 		Row {
 			width: parent.width
 			spacing: Theme.roundScaled(8, root.sf)
-			visible: root.player !== null && root.player.length > 0
+			visible: MprisService.player !== null && MprisService.player.length > 0
 
 			Text {
 				id: elapsedLabel
-				text: root.player ? root.fmtTime(root.player.position) : "0:00"
+				text: MprisService.player ? root.fmtTime(MprisService.player.position) : "0:00"
 				font.family: Theme.fontFamily
 				font.pixelSize: Theme.roundScaled(Theme.fontSizeSmall, root.sf)
 				color: Theme.stone
@@ -245,8 +186,8 @@ Item {
 				anchors.verticalCenter: parent.verticalCenter
 
 				Rectangle {
-					readonly property real fraction: root.player && root.player.length > 0
-						? Math.max(0, Math.min(1, root.player.position / root.player.length))
+					readonly property real fraction: MprisService.player && MprisService.player.length > 0
+						? Math.max(0, Math.min(1, MprisService.player.position / MprisService.player.length))
 						: 0
 					width: parent.width * fraction
 					anchors.verticalCenter: parent.verticalCenter
@@ -258,7 +199,7 @@ Item {
 
 			Text {
 				id: totalLabel
-				text: root.player ? root.fmtTime(root.player.length) : "0:00"
+				text: MprisService.player ? root.fmtTime(MprisService.player.length) : "0:00"
 				font.family: Theme.fontFamily
 				font.pixelSize: Theme.roundScaled(Theme.fontSizeSmall, root.sf)
 				color: Theme.stone
@@ -269,11 +210,11 @@ Item {
 		Row {
 			width: parent.width
 			spacing: Theme.roundScaled(8, root.sf)
-			visible: root.player !== null
+			visible: MprisService.player !== null
 
 			Text {
 				id: volGlyph
-				text: root.player && (root.player.volume || 0) > 0.5 ? "\uf028" : root.player && (root.player.volume || 0) > 0 ? "\uf027" : "\uf026"
+				text: MprisService.player && (MprisService.player.volume || 0) > 0.5 ? "\uf028" : MprisService.player && (MprisService.player.volume || 0) > 0 ? "\uf027" : "\uf026"
 				font.family: Theme.fontFamily
 				font.pixelSize: Theme.roundScaled(Theme.fontSize, root.sf)
 				color: Theme.accent
@@ -283,7 +224,7 @@ Item {
 			Text {
 				id: volLabel
 				text: {
-					const v = root.player ? root.player.volume : 0;
+					const v = MprisService.player ? MprisService.player.volume : 0;
 					if (typeof v !== "number" || v < 0)
 						return "—";
 					return Math.round(v * 100) + "%";
@@ -303,8 +244,8 @@ Item {
 				anchors.verticalCenter: parent.verticalCenter
 
 				Rectangle {
-					readonly property real vfrac: root.player && typeof root.player.volume === "number" && root.player.volume >= 0
-						? Math.max(0, Math.min(1, root.player.volume))
+					readonly property real vfrac: MprisService.player && typeof MprisService.player.volume === "number" && MprisService.player.volume >= 0
+						? Math.max(0, Math.min(1, MprisService.player.volume))
 						: 0
 					width: parent.width * vfrac
 					height: parent.height
@@ -317,13 +258,13 @@ Item {
 					acceptedButtons: Qt.LeftButton
 					onClicked: (mouse) => {
 						const frac = Math.max(0, Math.min(1, mouse.x / volTrack.width));
-						root.volumeSet(frac);
+						MprisService.volumeSet(MprisService.player, frac);
 					}
 					onWheel: (wheel) => {
-						const v = root.player ? root.player.volume : 0;
+						const v = MprisService.player ? MprisService.player.volume : 0;
 						const base = typeof v === "number" && v >= 0 ? v : 0;
 						const step = wheel.angleDelta.y > 0 ? 0.05 : -0.05;
-						root.volumeSet(base + step);
+						MprisService.volumeSet(MprisService.player, base + step);
 					}
 				}
 			}
@@ -332,17 +273,17 @@ Item {
 		Row {
 			width: parent.width
 			spacing: Theme.roundScaled(6, root.sf)
-			visible: root.players.length > 0
+			visible: MprisService.players.length > 0
 
 			Repeater {
-				model: root.players
+				model: MprisService.players
 
 				delegate: ModuleButton {
 					required property var modelData
 
-					readonly property bool isCurrent: root.player === modelData
+					readonly property bool isCurrent: MprisService.player === modelData
 
-					width: (parent.width - Theme.roundScaled(12, root.sf)) / Math.max(1, root.players.length)
+					width: (parent.width - Theme.roundScaled(12, root.sf)) / Math.max(1, MprisService.players.length)
 					height: Theme.roundScaled(30, root.sf)
 					active: modelData.status === "Playing"
 					padding: Theme.roundScaled(8, root.sf)

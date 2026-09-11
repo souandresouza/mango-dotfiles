@@ -42,7 +42,7 @@ Singleton {
 				backlight.percent = Number(j.pct) || 0;
 				backlight.available = backlight.current > 0;
 				backlight.changed();
-			} catch (e) {}
+			} catch (e) { console.warn("[backlight] falha ao parsear output:", e.message); }
 		}
 	}
 

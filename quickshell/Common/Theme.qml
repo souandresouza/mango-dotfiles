@@ -70,6 +70,7 @@ Singleton {
 	// ---- medidas ----
 	readonly property int barHeight: 36
 	readonly property int barTopMargin: 4
+	readonly property int contentHeight: barHeight - barTopMargin
 	readonly property int modulePadding: 10
 	readonly property int moduleSpacing: 6
 	readonly property int moduleRadius: 2

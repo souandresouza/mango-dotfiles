@@ -43,7 +43,7 @@ Singleton {
 				stats.memTotalMb = Number(j.mem_total_mb) || 0;
 				stats.temp = Number(j.temp) || 0;
 				stats.gpu = Number(j.gpu) || 0;
-			} catch (e) {}
+			} catch (e) { console.warn("[sysinfo] falha ao parsear output:", e.message); }
 		}
 	}
 }

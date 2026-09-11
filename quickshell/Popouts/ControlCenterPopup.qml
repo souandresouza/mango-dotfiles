@@ -10,7 +10,7 @@ Item {
 	property real sf: 1
 
 	readonly property string networkGlyph:
-		NetworkService.state === 2 ? "\uf6ff" : "\uf1eb"
+		NetworkService.state === 2 ? "\uf6ff" : NetworkService.state === 1 ? "\uf1eb" : "\uf05aa"
 	readonly property string volumeGlyph: {
 		if (AudioService.muted || AudioService.volume === 0)
 			return "\uf026";

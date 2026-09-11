@@ -36,7 +36,7 @@ Item {
 				const j = JSON.parse(line);
 				if (j && j.wal && j.wal.background)
 					Theme.walColors = j.wal;
-			} catch (e) {}
+			} catch (e) { console.error("[cadrocbar] falha ao parsear cores wal:", e.message); }
 		}
 	}
 

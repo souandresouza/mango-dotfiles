@@ -11,7 +11,7 @@ ModuleButton {
 			return "\uf1eb";
 		if (NetworkService.state === 2)
 			return "\uf6ff";
-		return "\uf1eb";
+		return "\uf05aa";
 	}
 
 	IconText {
