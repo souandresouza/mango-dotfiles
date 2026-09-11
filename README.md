@@ -95,4 +95,4 @@ O script automaticamente torna executáveis:
 │   └── user.png
 └── [diretórios de configuração]
 ```
-## Esse é o meu MangoWM. Eu gosto assim. Quer usar? Usa. Não gostou do hyprlock? Troca. Não usa Steam? Remove. Vida que segue. 😂
+### Esse é o meu MangoWM. Eu gosto assim. Quer usar? Usa. Não gostou do hyprlock? Troca. Não usa Steam? Remove. Vida que segue. 😂
