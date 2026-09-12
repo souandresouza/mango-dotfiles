@@ -2,28 +2,36 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Wayland._IdleInhibitor
 
 Singleton {
 	id: inhibitor
 
 	property bool active: false
 
-	Window {
+	PanelWindow {
 		id: inhibitionWindow
+		screen: Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
 		visible: inhibitor.active
-		width: 1
-		height: 1
-		x: -40
-		y: -40
-		opacity: 0
 		color: "transparent"
-	}
 
-	IdleInhibitor {
-		id: inhibition
-		window: inhibitionWindow
-		enabled: inhibitor.active
+		WlrLayershell.namespace: "cadrocbar:idle-inhibitor"
+		WlrLayershell.layer: WlrLayershell.Background
+		WlrLayershell.exclusiveZone: -1
+		WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+		anchors {
+			top: true
+			left: true
+		}
+
+		implicitWidth: 1
+		implicitHeight: 1
+
+		IdleInhibitor {
+			id: inhibition
+			window: inhibitionWindow
+			enabled: inhibitor.active
+		}
 	}
 
 	function enable() {
