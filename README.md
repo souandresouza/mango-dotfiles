@@ -105,21 +105,84 @@ chmod +x install.sh
 
 ## ⌨️ Keybindings
 
-> Full list in `mango/bind.conf` — view interactively with <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
+> Full list in `mango/bind.conf` — view interactively with <kbd>Super</kbd> + <kbd>A</kbd> (mango-keys)
+
+### Apps & Launchers
 
 | Binding | Action |
 |---------|--------|
-| <kbd>Super</kbd> + <kbd>Enter</kbd> | Open terminal |
-| <kbd>Super</kbd> + <kbd>D</kbd> | App launcher (fuzzel) |
+| <kbd>Super</kbd> + <kbd>Enter</kbd> | Open terminal (kitty) |
+| <kbd>Super</kbd> + <kbd>Space</kbd> | App launcher (fuzzel) |
+| <kbd>Super</kbd> + <kbd>E</kbd> | File manager (thunar) |
+| <kbd>Super</kbd> + <kbd>F</kbd> | Browser (firefox) |
+| <kbd>Super</kbd> + <kbd>S</kbd> | Music player (cmus) |
+| <kbd>Super</kbd> + <kbd>T</kbd> | Telegram |
+| <kbd>Super</kbd> + <kbd>W</kbd> | System monitor (btop) |
+| <kbd>Super</kbd> + <kbd>N</kbd> | Network manager (nmtui) |
+| <kbd>Super</kbd> + <kbd>O</kbd> | TTY clock |
+| <kbd>Super</kbd> + <kbd>D</kbd> | Bluetooth (bluetui) |
+| <kbd>Super</kbd> + <kbd>Y</kbd> | File explorer (yazi) |
+| <kbd>Super</kbd> + <kbd>X</kbd> | Emoji picker |
+
+### Scripts & Tools
+
+| Binding | Action |
+|---------|--------|
+| <kbd>Super</kbd> + <kbd>M</kbd> | **Exit menu** |
+| <kbd>Super</kbd> + <kbd>V</kbd> | Dashboard toggle |
+| <kbd>Super</kbd> + <kbd>B</kbd> | Clipboard toggle |
+| <kbd>Super</kbd> + <kbd>H</kbd> | Random wallpaper |
+| <kbd>Super</kbd> + <kbd>C</kbd> | Color picker (hyprpicker) |
+| <kbd>Super</kbd> + <kbd>I</kbd> | Image converter |
+| <kbd>Super</kbd> + <kbd>J</kbd> | Extract video frames |
+| <kbd>Super</kbd> + <kbd>G</kbd> | Sequência |
+| <kbd>Super</kbd> + <kbd>P</kbd> | Reload waybar |
+| <kbd>Super</kbd> + <kbd>R</kbd> | Reload MangoWM config |
+| <kbd>Super</kbd> + <kbd>L</kbd> | Lock screen (swaylock) |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> | Screen recorder |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> | Scrcpy mirror |
+
+### Window Management
+
+| Binding | Action |
+|---------|--------|
 | <kbd>Super</kbd> + <kbd>Q</kbd> | Close window |
-| <kbd>Super</kbd> + <kbd>1-9</kbd> | Switch tag |
-| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>1-9</kbd> | Move window to tag |
-| <kbd>Super</kbd> + <kbd>H/J/K/L</kbd> | Focus direction |
-| <kbd>Super</kbd> + <kbd>Space</kbd> | Cycle layout |
-| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd> | Toggle floating |
-| <kbd>Super</kbd> + <kbd>F</kbd> | Fullscreen |
-| <kbd>Super</kbd> + <kbd>S</kbd> | Screenshot |
-| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Exit menu |
+| <kbd>Alt</kbd> + <kbd>Tab</kbd> | Toggle overview |
+| <kbd>Alt</kbd> + <kbd>\\</kbd> | Toggle floating |
+| <kbd>Alt</kbd> + <kbd>A</kbd> | Maximize |
+| <kbd>Alt</kbd> + <kbd>F</kbd> | Fullscreen |
+| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Fake fullscreen |
+| <kbd>Alt</kbd> + <kbd>I</kbd> | Minimize |
+| <kbd>Alt</kbd> + <kbd>O</kbd> | Toggle overlay |
+| <kbd>Alt</kbd> + <kbd>Z</kbd> | Toggle scratchpad |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd> | Switch layout |
+| <kbd>Alt</kbd> + <kbd>←/→/↑/↓</kbd> | Focus direction |
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>←/→/↑/↓</kbd> | Swap window |
+
+### Tags (Workspaces)
+
+| Binding | Action |
+|---------|--------|
+| <kbd>Super</kbd> + <kbd>1-9</kbd> | Switch to tag |
+| <kbd>Alt</kbd> + <kbd>1-9</kbd> | View tag |
+| <kbd>Super</kbd> + <kbd>←/→</kbd> | Previous/next tag |
+
+### Screenshots
+
+| Binding | Action |
+|---------|--------|
+| <kbd>PrtSc</kbd> | Screenshot all |
+| <kbd>Alt</kbd> + <kbd>PrtSc</kbd> | Screenshot monitor |
+| <kbd>Ctrl</kbd> + <kbd>PrtSc</kbd> | Screenshot region |
+| <kbd>Shift</kbd> + <kbd>PrtSc</kbd> | Take screenshot |
+
+### Mouse
+
+| Binding | Action |
+|---------|--------|
+| <kbd>Super</kbd> + <kbd>Left click</kbd> | Move window |
+| <kbd>Alt</kbd> + <kbd>Right click</kbd> | Resize window |
+| <kbd>Shift</kbd> + <kbd>Middle click</kbd> | Maximize toggle |
 
 ---
 
