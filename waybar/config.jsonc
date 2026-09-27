@@ -102,7 +102,7 @@
       "on-click": "blueman-manager"
     },
     "custom/battery": {
-      "exec": "/home/andre/bin/battery-waybar",
+      "exec": "$HOME/bin/battery-waybar",
       "interval": 5,
       "format": "{}",
       "tooltip-format": "{tooltip}",
