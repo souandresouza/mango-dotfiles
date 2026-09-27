@@ -1,0 +1,9 @@
+lavat-git
+localsend
+mangowm-git
+python-pywal
+swaylock-effects
+tty-clock
+waybar-git
+yay
+yay-debug

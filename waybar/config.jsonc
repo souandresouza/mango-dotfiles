@@ -1,0 +1,129 @@
+[
+  {
+    "name": "topbar",
+    "layer": "top",
+    "position": "top",
+    "height": 24,
+    "mode": "dock",
+    "exclusive": true,
+    "spacing": 0,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "reload_style_on_change": true,
+    "modules-left": [
+      "ext/workspaces",
+      "mango/layout",
+      "custom/cmus",
+      "mango/window"
+    ],
+    "modules-center": [
+      "clock"
+    ],
+    "modules-right": [
+      "idle_inhibitor",
+      "network",
+      "wireplumber",
+      "bluetooth",
+      "custom/battery"
+    ],
+    "ext/workspaces": {
+      "format": "{name}",
+      "hide-empty": true,
+      "on-click": "activate",
+      "on-click-right": "toggle",
+      "overview-label": "OVERVIEW",
+      },
+    "clock": {
+      "format": "{:L%A, %d/%m/%Y - %T}",
+      "format-alt": "{:%A, %d/%m/%Y - %H:%M:%S}",
+      "timezone": "America/Sao_Paulo",
+      "locale": "pt_BR.UTF-8",
+      "interval": 1,
+      "tooltip-format": "<tt><small>{calendar}</small></tt>",
+      "calendar": {
+        "mode": "month",
+        "mode-mon-col": 3,
+        "on-scroll": 1,
+        "format": {
+          "months": "<span color='#ffead3'><b>{}</b></span>",
+          "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+        }
+      },
+      "actions": {
+        "on-click-right": "mode",
+        "on-scroll-up": "shift_up",
+        "on-scroll-down": "shift_down"
+      }
+    },
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "🟢",
+        "deactivated": "🔴"
+      }
+    },
+    "network": {
+      "format": "{ifname} [󰾆 {bandwidthTotalBytes}]",
+      "format-wifi": "{icon} {essid} ({signalStrength}%)",
+      "format-ethernet": "󱘖  {ifname} [󰾆 {bandwidthTotalBytes}]",
+      "format-disconnected": "󰌙 Disconnected ⚠",
+      "format-alt": "  {ipaddr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
+      "tooltip-format": "{ifname} via {gwaddr} ",
+      "tooltip-format-wifi": "{frequency} MHz ({signalStrength}%)",
+      "tooltip-format-ethernet": "{ipaddr}/{cidr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
+      "tooltip-format-disconnected": "Disconnected ⚠",
+      "max-length": 50,
+      "format-icons": [
+        "󰤯 ",
+        "󰤟 ",
+        "󰤢 ",
+        "󰤢 ",
+        "󰤨 "
+      ]
+    },
+    "wireplumber": {
+      "format": "{icon} {volume}%",
+      "format-muted": " Muted",
+      "format-icons": [
+        " ",
+        " ",
+        " "
+      ],
+      "scroll-step": 0.2,
+      "max-volume": 100,
+      "on-click": "pavucontrol"
+    },
+    "bluetooth": {
+      "format": " {status} {num_connections}",
+      "format-off": "󰂲 OFF",
+      "format-disabled": "󰂲 {status}",
+      "format-connected": "󰂱 {num_connections}",
+      "tooltip-format": "Devices connected: {num_connections}",
+      "on-click": "blueman-manager"
+    },
+    "custom/battery": {
+      "exec": "/home/andre/bin/battery-waybar",
+      "interval": 5,
+      "format": "{}",
+      "tooltip-format": "{tooltip}",
+      "return-type": "json"
+    },
+    "mango/layout": {
+      "format": "{}"
+      // "format-S": "Scroller",
+      // "format-T": "Tile"
+    },
+    "custom/cmus": {
+      "exec": "~/.config/scripts/cmus-status.sh",
+      "interval": 2,
+      "format": "{}",
+      "on-click": "kitty --app-id cmus -e cmus",
+      "max-length": 20,
+      "ellipsis": "start"
+    },
+    "mango/window": {
+    "format": "{}",
+	  "icon-size": 16
+    }
+  }
+]

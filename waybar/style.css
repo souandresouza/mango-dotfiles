@@ -1,0 +1,156 @@
+@import '../../.cache/wal/colors-waybar.css';
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* ---- Base window ---- */
+window#waybar {
+    background-color: transparent;
+}
+
+/* ---- Shared module styling ---- */
+#workspaces button,
+#clock,
+#layout,
+#idle_inhibitor,
+#network,
+#wireplumber,
+#bluetooth,
+#custom-battery,
+#custom-cmus {
+    background: @background;
+    color: @foreground;
+    margin: 0px 2px;
+    border-radius: 4px;
+    border: 2px solid @foreground;
+    opacity: 1;
+    padding: 0 10px;
+    min-width: 20px;
+    transition: all 0.2s ease;
+}
+#window {
+    background: @background;
+    color: @foreground;
+    margin: 0px 2px;
+    border-radius: 4px;
+    border: 2px solid @foreground;
+    opacity: 1;
+    padding: 0 10px;
+    min-width: 20px;
+    transition: all 0.2s ease;
+}
+
+/* ---- Workspaces ---- */
+#workspaces button {
+    all: initial;
+    padding: 0 8px;
+    color: white;
+    background: @background;
+    margin: 0px 2px;
+    border-radius: 4px;
+    border: 2px dashed @foreground;
+    opacity: 0.55;
+    transition: all 0.2s ease;
+}
+#workspaces button:hover {
+    opacity: 0.8;
+    border: 2px solid @foreground;
+}
+#workspaces button.active {
+    background: @background;
+    color: @foreground;
+    margin: 0px 2px;
+    border-radius: 4px;
+    border: 2px solid @foreground;
+    opacity: 1;
+}
+#workspaces button.empty {
+    color: @foreground;
+    background: @background;
+    opacity: 0.35;
+}
+#workspaces button.empty.active {
+    color: @foreground;
+    background-color: transparent;
+    opacity: 1;
+}
+#workspaces button.urgent {
+    background-color: @danger;
+    color: white;
+    border-color: @danger;
+}
+
+/* ---- Hover effect ---- */
+#clock:hover,
+#network:hover,
+#wireplumber:hover,
+#bluetooth:hover,
+#custom-battery:hover,
+#custom-cmus:hover {
+    border-color: @accent;
+    color: @accent;
+}
+
+/* ---- States ---- */
+#custom-battery.warning:not(.charging) {
+    color: @warning;
+    border-color: @warning;
+}
+#custom-battery.critical:not(.charging) {
+    color: @danger;
+    border-color: @danger;
+    animation: blink 1s ease-in-out infinite;
+}
+#custom-battery.charging {
+    color: @success;
+    border-color: @success;
+}
+
+#network.disconnected {
+    background: @foreground;
+    color: @background;
+    border: 2px dashed @background;
+}
+
+#bluetooth.disconnected {
+    background: @foreground;
+    color: @background;
+    border: 2px dashed @background;
+}
+
+#wireplumber.muted {
+    color: @warning;
+    border-color: @warning;
+}
+
+/* ---- Idle inhibitor states ---- */
+#idle_inhibitor.activated {
+    color: @success;
+    border-color: @success;
+}
+#idle_inhibitor.deactivated {
+    color: @danger;
+    border-color: @danger;
+}
+
+/* ---- Animations ---- */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* ---- Tooltip ---- */
+tooltip {
+    background: @background;
+    border: 2px solid @foreground;
+    border-radius: 8px;
+    padding: 8px;
+}
+tooltip label {
+    color: @foreground;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+}
