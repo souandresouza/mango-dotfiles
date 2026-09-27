@@ -1,0 +1,16 @@
+# cmus runtime data
+cmus/cache
+cmus/command-history
+cmus/search-history
+cmus/autosave
+
+# Editor files
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+.idea/
+
+# Local configs that shouldn't be shared
+mango/env.local

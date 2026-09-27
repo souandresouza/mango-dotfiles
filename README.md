@@ -11,17 +11,9 @@
 
 ## 📸 Preview
 
-| Component | Description |
-|-----------|-------------|
-| **WM** | [MangoWM](https://github.com/DreamMaoMao/mango) — tiling Wayland compositor |
-| **Bar** | [Waybar](https://github.com/Alexays/Waybar) with custom modules |
-| **Notifications** | [Mako](https://github.com/emersion/mako) |
-| **Launcher** | [Fuzzel](https://codeberg.org/dnkl/fuzzel) |
-| **Terminal** | [Kitty](https://sw.kovidgoyal.net/kitty/) |
-| **Lock** | [Swaylock-effects](https://github.com/mortie/swaylock-effects) |
-| **Shell** | Bash + custom scripts |
-| **Music** | [cmus](https://cmus.github.io/) |
-| **Visualizer** | [Cava](https://github.com/karlstav/cava) |
+![MangoWM Desktop](https://imgur.com/placeholder.png)
+
+> *Screenshot: MangoWM with Waybar, custom themes, and pywal colors*
 
 ---
 
@@ -58,7 +50,9 @@ mango-dotfiles/
 ├── opencode/                # OpenCode service config
 ├── lista_pacman.txt         # Official repo packages
 ├── lista_aur.txt            # AUR packages
-└── install.sh              # Automated install script
+├── install.sh              # Automated install script
+├── LICENSE                 # MIT License
+└── README.md               # This file
 ```
 
 ---
@@ -86,16 +80,26 @@ chmod +x install.sh
 ./install.sh
 ```
 
+### Install Options
+
+| Option | Description |
+|--------|-------------|
+| `./install.sh` | Full install (packages + dotfiles) |
+| `./install.sh --dry-run` | Preview changes without executing |
+| `./install.sh --skip-packages` | Only link dotfiles, skip package installation |
+
 ---
 
 ## 📦 What `install.sh` Does
 
-1. **Installs packages** from official repos (`lista_pacman.txt`)
-2. **Installs AUR helper** (yay) and AUR packages (`lista_aur.txt`)
-3. **Creates necessary directories** (`~/.config`, `~/bin`, etc.)
-4. **Symlinks/copies dotfiles** to their proper locations
-5. **Sets executable permissions** on scripts
-6. **Configures user directories** (XDG)
+1. **Pre-flight checks** — verifies Arch Linux, sudo, git, and internet
+2. **Installs packages** from official repos (`lista_pacman.txt`)
+3. **Installs AUR helper** (yay) and AUR packages (`lista_aur.txt`)
+4. **Creates necessary directories** (`~/.config`, `~/bin`, etc.)
+5. **Links dotfiles** using GNU Stow (with manual fallback)
+6. **Copies misc files** (mimeapps.list, user-dirs)
+7. **Sets executable permissions** on scripts
+8. **Configures user directories** (XDG)
 
 ---
 
@@ -105,17 +109,17 @@ chmod +x install.sh
 
 | Binding | Action |
 |---------|--------|
-| <kbd>Super</kbd> + <kbd>Enter` | Open terminal |
-| <kbd>Super</kbd> + <kbd>D` | App launcher (fuzzel) |
-| <kbd>Super</kbd> + <kbd>Q` | Close window |
-| <kbd>Super</kbd> + <kbd>1-9` | Switch tag |
+| <kbd>Super</kbd> + <kbd>Enter</kbd> | Open terminal |
+| <kbd>Super</kbd> + <kbd>D</kbd> | App launcher (fuzzel) |
+| <kbd>Super</kbd> + <kbd>Q</kbd> | Close window |
+| <kbd>Super</kbd> + <kbd>1-9</kbd> | Switch tag |
 | <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>1-9</kbd> | Move window to tag |
-| <kbd>Super</kbd> + <kbd>H/J/K/L` | Focus direction |
-| <kbd>Super</kbd> + <kbd>Space` | Cycle layout |
-| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>Space` | Toggle floating |
-| <kbd>Super</kbd> + <kbd>F` | Fullscreen |
+| <kbd>Super</kbd> + <kbd>H/J/K/L</kbd> | Focus direction |
+| <kbd>Super</kbd> + <kbd>Space</kbd> | Cycle layout |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd> | Toggle floating |
+| <kbd>Super</kbd> + <kbd>F</kbd> | Fullscreen |
 | <kbd>Super</kbd> + <kbd>S</kbd> | Screenshot |
-| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E` | Exit menu |
+| <kbd>Super</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Exit menu |
 
 ---
 
@@ -156,7 +160,7 @@ If you prefer to set things up manually:
 sudo pacman -S --needed - < lista_pacman.txt
 yay -S --needed - < lista_aur.txt
 
-# 2. Link configs
+# 2. Link configs with stow
 mkdir -p ~/.config
 stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock mako fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura xsettingsd nwg-look
 
@@ -170,12 +174,73 @@ cp user-dirs.dirs user-dirs.locale ~/.config/
 
 ---
 
+## 🔧 Post-Install
+
+After running `install.sh`, complete these steps:
+
+1. **Log out and log back in** for all changes to take effect
+2. **Set a wallpaper** to trigger pywal colors:
+   ```bash
+   ~/.config/scripts/random-wallpaper.sh
+   ```
+3. **Start MangoWM** from your display manager or run:
+   ```bash
+   mango
+   ```
+
+### Enabling Services
+
+```bash
+# Bluetooth
+sudo systemctl enable --now bluemask
+
+# Power management
+sudo systemctl enable --now power-profiles-daemon
+
+# Network
+sudo systemctl enable --now NetworkManager
+```
+
+---
+
+## 🐛 Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| Waybar not starting | Ensure `waybar-git` is installed from AUR |
+| Colors not applying | Run `~/.config/scripts/colors/mango-colors.sh` |
+| Fonts missing | Install a nerd-font package: `sudo pacman -S ttf-nerd-fonts-symbols` |
+| Stow conflicts | Run `stow --adopt --force -d ~/mango-dotfiles -t ~/.config <package>` |
+| MangoWM not found | Ensure `mangowm-git` is installed from AUR |
+| Notifications not showing | Check if `mako` is running: `pgrep mako` |
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Here's how to help:
+
+1. **Fork** the repository
+2. **Create a branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Guidelines
+
+- Keep scripts POSIX-compliant where possible
+- Test `install.sh` with `--dry-run` before submitting
+- Update README.md if you add new components
+- Add new packages to the appropriate list (`lista_pacman.txt` or `lista_aur.txt`)
+
+---
+
 ## 📝 Notes
 
 - **MangoWM** is a relatively new and experimental Wayland compositor — expect some rough edges.
 - Some configs assume a **Brazilian Portuguese** locale (`pt_BR.UTF-8`).
 - Monitor configuration in `mango/config.conf` is specific to my setup (eDP-1 + HDMI-A-1) — adjust accordingly.
-- The `cmus/cache` and `cmus/lib.pl` contain your personal music library paths.
+- The `cmus/cache` and `cmus/lib.pl` contain your personal music library paths (gitignored).
 
 ---
 

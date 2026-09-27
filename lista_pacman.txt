@@ -118,3 +118,4 @@ zed
 zenity
 zoxide
 zram-generator
+stow
