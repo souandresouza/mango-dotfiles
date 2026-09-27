@@ -11,9 +11,9 @@
 
 ## 📸 Preview
 
-![MangoWM Desktop](https://imgur.com/placeholder.png)
+![Waybar](screenshots/waybar.png)
 
-> *Screenshot: MangoWM with Waybar, custom themes, and pywal colors*
+> *Waybar with custom modules: workspaces, layout, music player, clock, network, volume, bluetooth, and battery*
 
 ---
 
