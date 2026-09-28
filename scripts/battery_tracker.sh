@@ -1,5 +1,5 @@
 #!/bin/bash
-# Monitor de Bateria para Hyprland/Arch Linux
+# Monitor de Bateria para MangoWM/Arch Linux
 # Rastreia ciclo de descarga desde desconexão até 20%
 
 LOG_FILE="$HOME/battery/.battery_history"

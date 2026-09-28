@@ -12,12 +12,8 @@ mkdir -p "$DIR"
 
 # ========= DETECT COMPOSITOR =========
 detect_compositor() {
-  if command -v hyprctl >/dev/null 2>&1; then
-    echo "hyprland"
-  elif command -v niri >/dev/null 2>&1; then
-    echo "niri"
-  elif command -v swaymsg >/dev/null 2>&1; then
-    echo "sway"
+  if command -v mango >/dev/null 2>&1; then
+    echo "mango"
   else
     echo "unknown"
   fi
@@ -28,16 +24,9 @@ COMPOSITOR=$(detect_compositor)
 # ========= GET ACTIVE WINDOW GEOMETRY =========
 get_window_geom() {
   case "$COMPOSITOR" in
-    hyprland)
-      hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
-      ;;
-    niri)
-      niri msg -j windows | jq -r '.[] | select(.focused==true) | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"'
-      ;;
-    sway)
-      swaymsg -t get_tree | jq -r '
-        .. | select(.focused? == true) |
-        "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"' | head -n1
+    mango)
+      # TODO: substituir pelo comando que o MangoWM expõe para geometria da janela ativa
+      return 1
       ;;
     *)
       return 1
