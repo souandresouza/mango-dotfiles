@@ -15,6 +15,12 @@
 
 > *Waybar with custom modules: workspaces, layout, music player, clock, network, volume, bluetooth, and battery*
 
+### Layout Switching Demo
+
+![MangoWM layout switching demo](videos/mango-layout-switch.gif)
+
+> *Switching between layouts with cava, cmatrix, tty-clock, and lavat running*
+
 ---
 
 ## 📁 Repository Structure
