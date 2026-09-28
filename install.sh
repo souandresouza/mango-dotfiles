@@ -178,6 +178,7 @@ link_configs() {
         zathura
         xsettingsd
         nwg-look
+        opencode
         scripts
         wallpapers
     )

@@ -47,7 +47,7 @@ mango-dotfiles/
 │   ├── clipboard.sh         # Clipboard manager
 │   └── ...                  # Various utilities
 ├── wallpapers/              # Wallpaper collection
-├── opencode/                # OpenCode service config
+├── opencode/                # OpenCode config
 ├── lista_pacman.txt         # Official repo packages
 ├── lista_aur.txt            # AUR packages
 ├── install.sh              # Automated install script

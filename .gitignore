@@ -14,4 +14,4 @@ cmus/autosave
 
 # Local configs that shouldn't be shared
 mango/env.local
-opencode/
+opencode/service.json
