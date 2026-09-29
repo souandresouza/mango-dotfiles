@@ -119,7 +119,7 @@ chmod +x install.sh
 |---------|--------|
 | <kbd>Super</kbd> + <kbd>Enter</kbd> | Open terminal (kitty) |
 | <kbd>Super</kbd> + <kbd>Space</kbd> | App launcher (fuzzel) |
-| <kbd>Super</kbd> + <kbd>E</kbd> | File manager (thunar) |
+| <kbd>Super</kbd> + <kbd>E</kbd> | File manager ([cadrocfile](https://github.com/souandresouza/cadrocfile)) |
 | <kbd>Super</kbd> + <kbd>F</kbd> | Browser (firefox) |
 | <kbd>Super</kbd> + <kbd>S</kbd> | Music player (cmus) |
 | <kbd>Super</kbd> + <kbd>T</kbd> | Telegram |
@@ -322,5 +322,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 ## 🙏 Acknowledgments
 
 - [MangoWM](https://github.com/DreamMaoMao/mango) by DreamMaoMao
+- [cadrocfile](https://github.com/souandresouza/cadrocfile) — file manager used in this setup
 - The Arch Linux community
 - All the open-source projects that make this setup possible
