@@ -6,7 +6,7 @@
 # Usage:
 #   ./install.sh              Full install
 #   ./install.sh --dry-run    Preview changes without executing
-#   ./install.sh --skip-packages   Only link dotfiles, skip package installation
+#   ./install.sh --skip-packages   Only copy dotfiles, skip package installation
 #
 
 set -euo pipefail
@@ -24,7 +24,7 @@ for arg in "$@"; do
             echo ""
             echo "Options:"
             echo "  --dry-run          Preview changes without executing"
-            echo "  --skip-packages    Skip package installation, only link dotfiles"
+            echo "  --skip-packages    Skip package installation, only copy dotfiles"
             echo "  -h, --help         Show this help message"
             exit 0
             ;;
@@ -49,7 +49,7 @@ NC='\033[0m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="${HOME}/.config"
 BIN_DIR="${HOME}/bin"
-WALLPAPER_DIR="${HOME}/Pictures/wallpapers"
+WALLPAPER_DIR="${HOME}/.config/wallpapers"
 
 PACMAN_LIST="${SCRIPT_DIR}/lista_pacman.txt"
 AUR_LIST="${SCRIPT_DIR}/lista_aur.txt"
@@ -158,10 +158,10 @@ create_directories() {
     done
 }
 
-# ── GNU Stow Linking ─────────────────────────────────────────────────────────
+# ── Config Copying ───────────────────────────────────────────────────────────
 
-link_configs() {
-    header "Linking Configuration Files (GNU Stow)"
+copy_configs() {
+    header "Copying Configuration Files"
 
     local configs=(
         mango
@@ -180,39 +180,8 @@ link_configs() {
         nwg-look
         opencode
         scripts
-        wallpapers
     )
 
-    if ! check_command stow; then
-        warn "GNU stow not found — falling back to manual symlinking."
-        link_configs_manual
-        return
-    fi
-
-    for cfg in "${configs[@]}"; do
-        local src="${SCRIPT_DIR}/${cfg}"
-        local dest="${CONFIG_DIR}"
-
-        if [[ ! -d "$src" ]]; then
-            warn "Skipping (not found): $src"
-            continue
-        fi
-
-        info "Stowing: $cfg -> $dest"
-        if ! $DRY_RUN; then
-            # Adopt existing files to avoid conflicts, then stow
-            stow --adopt --dir="$SCRIPT_DIR" --target="$dest" "$cfg" 2>/dev/null || {
-                warn "Stow conflict for $cfg — trying with --force"
-                stow --adopt --force --dir="$SCRIPT_DIR" --target="$dest" "$cfg" 2>/dev/null || {
-                    error "Failed to stow $cfg"
-                }
-            }
-        fi
-    done
-    success "All configs stowed."
-}
-
-link_configs_manual() {
     for cfg in "${configs[@]}"; do
         local src="${SCRIPT_DIR}/${cfg}"
         local dest="${CONFIG_DIR}/${cfg}"
@@ -222,20 +191,33 @@ link_configs_manual() {
             continue
         fi
 
-        if [[ -L "$dest" ]]; then
-            info "Symlink exists: $dest"
-        elif [[ -d "$dest" ]]; then
-            warn "Directory already exists: $dest"
-            if confirm "Replace with symlink?"; then
-                run "rm -rf $dest"
-                run "ln -s $src $dest"
-                success "Linked: $dest -> $src"
-            fi
-        else
-            run "ln -s $src $dest"
-            success "Linked: $dest -> $src"
+        if [[ -e "$dest" ]]; then
+            local backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
+            warn "$dest exists — backing up to $backup"
+            run "mv '$dest' '$backup'"
         fi
+
+        run "cp -r '$src' '$dest'"
+        success "Copied: $cfg -> $dest"
     done
+}
+
+copy_assets() {
+    header "Copying Assets (Wallpapers & Videos)"
+
+    local video_dir="${HOME}/Videos/wallpapers"
+
+    if [[ -d "${SCRIPT_DIR}/wallpapers" ]]; then
+        run "mkdir -p '$WALLPAPER_DIR'"
+        run "cp -r '${SCRIPT_DIR}/wallpapers/.' '$WALLPAPER_DIR/'"
+        success "Wallpapers -> $WALLPAPER_DIR"
+    fi
+
+    if [[ -d "${SCRIPT_DIR}/videos" ]]; then
+        run "mkdir -p '$video_dir'"
+        run "cp -r '${SCRIPT_DIR}/videos/.' '$video_dir/'"
+        success "Videos -> $video_dir"
+    fi
 }
 
 # ── File Copying ─────────────────────────────────────────────────────────────
@@ -354,7 +336,7 @@ main() {
     if $SKIP_PACKAGES; then
         warn "Skipping package installation (--skip-packages)."
     else
-        if ! confirm "This will install packages and link dotfiles. Continue?"; then
+        if ! confirm "This will install packages and copy dotfiles. Continue?"; then
             echo -e "${YELLOW}Aborted.${NC}"
             exit 0
         fi
@@ -364,7 +346,8 @@ main() {
     fi
 
     create_directories
-    link_configs
+    copy_configs
+    copy_assets
     copy_files
     set_permissions
     setup_user_dirs
