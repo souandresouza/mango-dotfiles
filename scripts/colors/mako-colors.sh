@@ -74,7 +74,7 @@ markup=1
 max-icon-size=64
 default-timeout=5000
 ignore-timeout=1
-font=Millimetre 10
+font=JetBrainsMono Nerd Font 10
 text-alignment=center
 max-visible=5
 
@@ -83,10 +83,15 @@ background-color=${color0}
 text-color=${color7}
 border-color=${color1}
 
-# urgency= high
+[urgency=high]
 background-color=${color0}
 text-color=${color7}
-border-color=${color1}
+border-color=${color6}
+
+[urgency=critical]
+background-color=${color0}
+text-color=${color7}
+border-color=${color9}
 EOF
 
 # Recarrega o mako

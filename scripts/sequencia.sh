@@ -7,3 +7,4 @@ $HOME/.config/scripts/colors/mako-colors.sh
 $HOME/.config/scripts/colors/mango-colors.sh
 $HOME/.config/scripts/colors/waybar-colors.sh
 $HOME/.config/scripts/colors/zathura-colors.sh
+$HOME/.config/scripts/colors/swaylock-colors.sh

@@ -24,7 +24,7 @@
       "network",
       "wireplumber",
       "bluetooth",
-      "custom/battery"
+      "battery"
     ],
     "ext/workspaces": {
       "format": "{name}",
@@ -34,11 +34,11 @@
       "overview-label": "OVERVIEW",
       },
     "clock": {
-      "format": "{:L%A, %d/%m/%Y - %T}",
+      "format": "{:L%A, %d/%m/%Y}",
       "format-alt": "{:%A, %d/%m/%Y - %H:%M:%S}",
       "timezone": "America/Sao_Paulo",
       "locale": "pt_BR.UTF-8",
-      "interval": 1,
+      "interval": 30,
       "tooltip-format": "<tt><small>{calendar}</small></tt>",
       "calendar": {
         "mode": "month",
@@ -101,12 +101,15 @@
       "tooltip-format": "Devices connected: {num_connections}",
       "on-click": "blueman-manager"
     },
-    "custom/battery": {
-      "exec": "$HOME/bin/battery-waybar",
-      "interval": 5,
-      "format": "{}",
-      "tooltip-format": "{tooltip}",
-      "return-type": "json"
+    "battery": {
+      "format": "{capacity}% {icon}",
+      "format-charging": "{capacity}% 󰂄",
+      "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
+      "interval": 30,
+      "states": {
+        "warning": 30,
+        "critical": 15
+      }
     },
     "mango/layout": {
       "format": "{}"
@@ -114,8 +117,8 @@
       // "format-T": "Tile"
     },
     "custom/cmus": {
-      "exec": "~/.config/scripts/cmus-status.sh",
-      "interval": 2,
+      "exec": "~/.config/scripts/music-tui-status.sh",
+      "interval": 5,
       "format": "{}",
       "on-click": "kitty --app-id cmus -e cmus",
       "max-length": 20,

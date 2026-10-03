@@ -1,5 +1,5 @@
 ignore-empty-password
-font=Ubuntu
+font=JetBrainsMono Nerd Font
 
 clock
 timestr=%T
@@ -19,7 +19,7 @@ indicator-radius=100
 indicator-thickness=7
 indicator-caps-lock
 
-key-hl-color=2ac3de
+key-hl-color=9A5EA5
 
 separator-color=00000000
 
@@ -29,13 +29,13 @@ inside-caps-lock-color=009ddc00
 inside-ver-color=d9d8d800
 inside-wrong-color=ee2e2400
 
-ring-color=231f20D9
-ring-clear-color=231f20D9
-ring-caps-lock-color=231f20D9
-ring-ver-color=231f20D9
-ring-wrong-color=231f20D9
+ring-color=4C316ED9
+ring-clear-color=9A5EA5D9
+ring-caps-lock-color=304F97D9
+ring-ver-color=304F97D9
+ring-wrong-color=4C316ED9
 
-line-color=2ac3de
+line-color=9A5EA5
 line-clear-color=ffd204FF
 line-caps-lock-color=009ddcFF
 line-ver-color=d9d8d8FF
@@ -44,9 +44,9 @@ line-wrong-color=ee2e24FF
 text-clear-color=ffd20400
 text-ver-color=d9d8d800
 text-wrong-color=ee2e2400
-text-color=ffffff
+text-color=a8bfe0
 
-bs-hl-color=ee2e24FF
+bs-hl-color=4C316EFF
 caps-lock-key-hl-color=ffd204FF
 caps-lock-bs-hl-color=ee2e24FF
 disable-caps-lock-text

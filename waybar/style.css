@@ -1,5 +1,11 @@
 @import '../../.cache/wal/colors-waybar.css';
 
+/* Accent/semantic colors mapped from pywal palette */
+@define-color accent @color14;
+@define-color success #3fb950;
+@define-color warning #d29922;
+@define-color danger #f85149;
+
 * {
     font-family: "JetBrainsMono Nerd Font", monospace;
     font-size: 16px;
@@ -19,7 +25,7 @@ window#waybar {
 #network,
 #wireplumber,
 #bluetooth,
-#custom-battery,
+#battery,
 #custom-cmus {
     background: @background;
     color: @foreground;
@@ -88,23 +94,23 @@ window#waybar {
 #network:hover,
 #wireplumber:hover,
 #bluetooth:hover,
-#custom-battery:hover,
+#battery:hover,
 #custom-cmus:hover {
     border-color: @accent;
     color: @accent;
 }
 
 /* ---- States ---- */
-#custom-battery.warning:not(.charging) {
+#battery.warning:not(.charging) {
     color: @warning;
     border-color: @warning;
 }
-#custom-battery.critical:not(.charging) {
+#battery.critical:not(.charging) {
     color: @danger;
     border-color: @danger;
     animation: blink 1s ease-in-out infinite;
 }
-#custom-battery.charging {
+#battery.charging {
     color: @success;
     border-color: @success;
 }

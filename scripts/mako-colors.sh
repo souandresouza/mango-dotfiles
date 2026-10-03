@@ -31,7 +31,7 @@ markup=1
 max-icon-size=64
 default-timeout=5000
 ignore-timeout=1
-font=Millimetre 10
+font=JetBrainsMono Nerd Font 10
 text-alignment=center
 max-visible=5
 
