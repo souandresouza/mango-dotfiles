@@ -37,7 +37,8 @@ window#waybar {
     min-width: 20px;
     transition: all 0.2s ease;
 }
-#window {
+#window,
+#custom-window {
     background: @background;
     color: @foreground;
     margin: 0px 2px;

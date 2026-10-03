@@ -14,7 +14,7 @@
       "ext/workspaces",
       "mango/layout",
       "custom/cmus",
-      "mango/window"
+      "custom/window"
     ],
     "modules-center": [
       "clock"
@@ -124,9 +124,11 @@
       "max-length": 20,
       "ellipsis": "start"
     },
-    "mango/window": {
-    "format": "{}",
-	  "icon-size": 16
+    "custom/window": {
+      "exec": "~/.config/scripts/mango-window-marquee.sh",
+      "return-type": "json",
+      "format": "{}",
+      "tooltip": false
     }
   }
 ]
