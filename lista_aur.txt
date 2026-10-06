@@ -4,7 +4,6 @@ mangowm-git
 python-pywal
 swaylock-effects
 tty-clock
-ttf-jetbrains-mono-nerd
 waybar-git
 yay
 yay-debug

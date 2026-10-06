@@ -17,20 +17,17 @@ font=JetBrainsMono Nerd Font 10
 text-alignment=center
 max-visible=5
 
-[mode=do-not-disturb]
-invisible=1
-
 [urgency=normal]
-background-color=#080B0D
-text-color=#bddcb0
-border-color=#2D6B48
+background-color=#091210
+text-color=#a4c6c4
+border-color=#2F584F
 
 [urgency=high]
-background-color=#080B0D
-text-color=#bddcb0
-border-color=#58A15F
+background-color=#091210
+text-color=#a4c6c4
+border-color=#9BBB65
 
 [urgency=critical]
-background-color=#080B0D
-text-color=#bddcb0
-border-color=#2D6B48
+background-color=#091210
+text-color=#a4c6c4
+border-color=#2F584F
