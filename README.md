@@ -41,6 +41,7 @@ mango-dotfiles/
 ├── swaync/                  # Notification daemon config + pywal theme
 ├── fuzzel/                  # App launcher config
 ├── kitty/                   # Terminal config
+├── qbittorrent/             # qBittorrent theme template (pywal)
 ├── cava/                    # Audio visualizer + shaders
 ├── cmus/                    # Music player config & playlists
 ├── fastfetch/               # System info tool config
@@ -205,6 +206,29 @@ Colors are managed via [Pywal](https://github.com/dylanaraps/pywal) — set a wa
 ```
 
 Each app has its own color script in `scripts/colors/`.
+
+### qBittorrent
+
+The theme lives in `~/.config/qBittorrent/themes/pywal/`. Only the template is
+tracked; `config.json` and `stylesheet.qss` are generated from pywal on every
+wallpaper change:
+
+| File | Tracked | Description |
+|------|---------|-------------|
+| `stylesheet.qss.tpl` | yes | Editable template (17 color tokens) |
+| `stylesheet.qss` | no | Generated Qt stylesheet |
+| `config.json` | no | Generated palette |
+
+qBittorrent reads the theme **only at startup** — `qbittorrent-colors.sh`
+regenerates the files and sends a notification, but restarting the app is up to
+you. To apply it by hand:
+
+```bash
+~/.local/bin/qbittorrent-colors.sh
+```
+
+Enable it once in `Tools > Preferences > Behavior > Interface > Use custom UI
+Theme`, pointing at `~/.config/qBittorrent/themes/pywal/config.json`.
 
 ---
 

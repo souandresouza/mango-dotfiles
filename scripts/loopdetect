@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Wrapper do loop_detect.py usando o venv proprio (fora do /tmp).
+set -euo pipefail
+VENV="$HOME/.local/share/loopdetect/venv"
+SCRIPT="${LOOPDETECT_PY:-$HOME/.local/share/loopdetect/loop_detect.py}"
+[ -f "$SCRIPT" ] || SCRIPT="$(dirname "$(readlink -f "$0")")/loop_detect.py"
+exec "$VENV/bin/python" -u "$SCRIPT" "$@"

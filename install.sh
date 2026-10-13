@@ -214,19 +214,18 @@ copy_scripts() {
     # sequencia.sh chama tudo por caminho absoluto a partir dali).
     local subdirs=(colors)
 
-    for script in "$scripts_dir"/*.sh; do
-        [[ -f "$script" ]] || continue
-        run "cp '$script' '$BIN_DIR/' && chmod +x '$BIN_DIR/$(basename "$script")'"
-        success "Copied script: $(basename "$script") -> $BIN_DIR/"
+    # Não só *.sh: loopdetect/loopbatch/loopgui são executáveis sem
+    # extensão e um glob '*.sh' os deixaria de fora numa instalação nova.
+    local targets=("$scripts_dir")
+    for sub in "${subdirs[@]}"; do
+        [[ -d "${scripts_dir}/${sub}" ]] && targets+=("${scripts_dir}/${sub}")
     done
 
-    for sub in "${subdirs[@]}"; do
-        local src="${scripts_dir}/${sub}"
-        [[ -d "$src" ]] || continue
-        for script in "$src"/*.sh; do
+    for dir in "${targets[@]}"; do
+        for script in "$dir"/*; do
             [[ -f "$script" ]] || continue
             run "cp '$script' '$BIN_DIR/' && chmod +x '$BIN_DIR/$(basename "$script")'"
-            success "Copied script: ${sub}/$(basename "$script") -> $BIN_DIR/"
+            success "Copied script: $(basename "$script") -> $BIN_DIR/"
         done
     done
 }
@@ -247,6 +246,33 @@ copy_assets() {
         run "cp -r '${SCRIPT_DIR}/videos/.' '$video_dir/'"
         success "Videos -> $video_dir"
     fi
+}
+
+# Copia SO o template do tema. Não entra em copy_configs de propósito: lá o
+# instalador faz 'mv' do diretório inteiro, o que apagaria a sessão e as
+# preferências do qBittorrent do usuário.
+copy_qbittorrent_theme() {
+    header "Copying qBittorrent Theme"
+
+    local src="${SCRIPT_DIR}/qbittorrent"
+    # 'B' maiúsculo: é o nome real do diretório do qBittorrent (Qt usa o nome
+    # da app como está) e é case-sensitive no Linux.
+    local dest="${CONFIG_DIR}/qBittorrent/themes/pywal"
+
+    if [[ ! -d "$src" ]]; then
+        warn "Skipping (not found): $src"
+        return
+    fi
+
+    run "mkdir -p '$dest'"
+    for file in "$src"/*.tpl; do
+        [[ -f "$file" ]] || continue
+        run "cp '$file' '$dest/'"
+        success "Copied: $(basename "$file") -> $dest"
+    done
+
+    info "Ative o tema em: qBittorrent > Tools > Preferences > Behavior > Interface"
+    info "  'Use custom UI Theme' -> $dest/config.json (gerado por qbittorrent-colors.sh)"
 }
 
 # ── File Copying ─────────────────────────────────────────────────────────────
@@ -275,8 +301,8 @@ copy_files() {
 set_permissions() {
     header "Setting Permissions"
 
-    run "find $SCRIPT_DIR -name '*.sh' -exec chmod +x {} +"
-    success "All .sh files set as executable."
+    run "find $SCRIPT_DIR/scripts -type f -exec chmod +x {} +"
+    success "All scripts set as executable."
 }
 
 # ── User Directories ──────────────────────────────────────────────────────────
@@ -378,6 +404,7 @@ main() {
     copy_configs
     copy_scripts
     copy_assets
+    copy_qbittorrent_theme
     copy_files
     set_permissions
     setup_user_dirs

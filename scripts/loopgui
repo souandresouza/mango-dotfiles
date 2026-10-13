@@ -1,0 +1,261 @@
+#!/usr/bin/env bash
+# loopgui - interface grafica (fuzzel/rofi) para o loop_detect.py / loopbatch
+#
+# Trabalha SO com videos que ja estao no notebook. Nao baixa nada.
+# A fonte padrao e ~/Downloads; se estiver vazia, cai para ~/Videos.
+#
+#   1. escolhe um video da lista (fuzzy) ou processa uma pasta em lote
+#   2. roda a analise (saida no terminal)
+#   3. menu de acoes: salvar o trecho unico, abrir no player, so relatorio
+#
+# Uso:
+#   loopgui                 # fluxo completo
+#   loopgui <arquivo>       # ja entra com o arquivo, pula o passo 1
+#
+# Atalho sugerido (Hyprland / sway):
+#   bind = SUPER SHIFT L, exec, loopgui
+
+set -uo pipefail
+
+HIST="$HOME/.local/state/loopgui/history"
+PICKER=""
+HIST_N=12
+OUTDIR="${LOOPGUI_OUTDIR:-$HOME/Vídeos/loopdetect}"
+
+mkdir -p "$(dirname "$HIST")" "$OUTDIR"
+
+# Pastas varridas em ordem de prioridade. ~/Downloads primeiro, como pedido.
+SEARCH_DIRS=("$HOME/Downloads" "$HOME/Vídeos" "$HOME/Área de trabalho" "$HOME/Desktop")
+
+# Duas armadilhas do find aqui:
+#  - varios -iname sao combinados com AND (logo, -iname a -iname b = nada).
+#    extensoes alternativas precisam de -o dentro de \( ... \).
+#  - um '-iname *.mp4' sem aspas sofre expansao de glob do shell.
+VIDEO_EXT=(mp4 mkv webm mov avi m4v mpg mpeg)
+INCLUDE=()
+for _e in "${VIDEO_EXT[@]}"; do
+    [ ${#INCLUDE[@]} -eq 0 ] && INCLUDE+=(-iname "*.$_e") \
+                           || INCLUDE+=(-o -iname "*.$_e")
+done
+EXCLUDE=(-not -path '*/.git/*' -not -path '*/.pub-cache/*'
+         -not -path '*/node_modules/*' -not -path '*/.cache/*')
+
+# ----------------------------------------------------------------- pickers
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+detect_picker() {
+    if   have fuzzel; then PICKER=fuzzel
+    elif have rofi;   then PICKER=rofi
+    else echo "ERRO: precisa de fuzzel ou rofi instalado." >&2; exit 127
+    fi
+}
+
+menu() {   # menu <prompt> <placeholder>   (entradas via stdin)
+    local prompt="$1" placeholder="$2"
+    case "$PICKER" in
+        fuzzel)
+            fuzzel --dmenu --prompt="$prompt" --placeholder="$placeholder" \
+                   --fuzzy-min-length=1 --lines=12
+            ;;
+        rofi)   rofi -dmenu -p "$prompt" -i -no-custom ;;
+    esac
+}
+
+ask() {    # entrada livre
+    local prompt="$1" placeholder="$2"
+    case "$PICKER" in
+        fuzzel) fuzzel --dmenu --prompt-only="$prompt" --placeholder="$placeholder" ;;
+        rofi)   rofi -dmenu -p "$prompt" -i -no-custom ;;
+    esac
+}
+
+notify() { have notify-send && notify-send -a "loopdetect" "$@" 2>/dev/null || true; }
+die()     { echo "$1" >&2; notify -u critical "loopdetect" "$1"; exit 1; }
+
+# ------------------------------------------------------------------ videos
+
+human() { printf '%d:%02d' $((${1%.*}/60)) $((${1%.*}%60)); }
+
+# lista videos com duracao e tamanho, para dar contexto na escolha fuzzy
+video_list() {
+    local found=0
+    for d in "${SEARCH_DIRS[@]}"; do
+        [[ -d "$d" ]] || continue
+        while IFS= read -r f; do
+            [[ -f "$f" ]] || continue
+            [[ "$f" == *"/loops/"* || "${f##*/}" == *__loop.* ]] && continue
+            local sz dur rel
+            sz=$(( $(stat -c%s "$f") / 1048576 ))
+            dur=$(ffprobe -v error -show_entries format=duration \
+                        -of csv=p=0 "$f" 2>/dev/null | cut -d. -f1)
+            rel="${f#"$HOME"/}"
+            printf "%4dMB  %5s  %s\n" "$sz" "${dur:+$(human "$dur")}" "$rel"
+            found=1
+        done < <(find "$d" -type f \( "${INCLUDE[@]}" \) "${EXCLUDE[@]}" \
+                     2>/dev/null | sort)
+    done
+    [[ $found -eq 1 ]]
+}
+
+first_dir_with_videos() {
+    local d
+    for d in "${SEARCH_DIRS[@]}"; do
+        [[ -d "$d" ]] || continue
+        find "$d" -type f \( "${INCLUDE[@]}" \) "${EXCLUDE[@]}" \
+             -print -quit 2>/dev/null | grep -q . && { echo "$d"; return; }
+    done
+}
+
+# o que o menu mostraria (util para depurar sem abrir o fuzzel)
+if [[ "${1:-}" == "--list" ]]; then
+    video_list || echo "(nenhum video encontrado em: ${SEARCH_DIRS[*]})"
+    exit 0
+fi
+
+slug() { printf '%s' "$1" | tr -cd '[:alnum:] _-' | tr ' ' '_' | cut -c1-60; }
+
+add_hist() {
+    printf '%s\n' "$1" >> "$HIST"
+    tac "$HIST" | awk '!seen[$0]++' | head -"$HIST_N" | tac > "$HIST.tmp"
+    mv "$HIST.tmp" "$HIST"
+}
+
+# -------------------------------------------------------------------- main
+
+detect_picker
+DETECT="$HOME/.local/bin/loopdetect"
+BATCH="$HOME/.local/bin/loopbatch"
+[[ -x "$DETECT" ]] || die "loopdetect não encontrado em $DETECT"
+[[ -x "$BATCH" ]]  || die "loopbatch não encontrado em $BATCH"
+
+SRC="${1:-}"
+FIRST_DIR="$(first_dir_with_videos)"
+
+# ---- passo 1: o que fazer
+if [[ -z "$SRC" ]]; then
+    ENTRIES="🎬  Analisar um vídeo
+📚  Lote — processar uma pasta inteira
+─────────────────────────────"
+    if [[ -s "$HIST" ]]; then
+        ENTRIES="$ENTRIES
+🕘  Histórico
+─────────────
+$(sed 's/^/    /' "$HIST")"
+    fi
+    CH="$(printf '%s\n' "$ENTRIES" | menu "loopdetect ▸ " "o que fazer?" \
+          | sed 's/^[[:space:]]*//')"
+    [[ -z "$CH" ]] && exit 0
+
+    case "$CH" in
+    📚*|Lote*)
+        FOLDER="${FIRST_DIR:-$HOME/Downloads}"
+        IN="$(ask "pasta ▸ " "$FOLDER")"
+        [[ -z "$IN" ]] && exit 0
+        FOLDER="${IN/#\~/$HOME}"
+        [[ -d "$FOLDER" ]] || die "pasta não existe: $FOLDER"
+        echo "[loopgui] lote em $FOLDER"
+        "$BATCH" "$FOLDER" -j 2 --crf 16 --skip-static
+        notify "loopdetect" "lote concluído"
+        exit 0
+        ;;
+    🕘*|Hist*)
+        CH="$(menu "histórico ▸ " "escolha" < "$HIST")"
+        [[ -z "$CH" ]] && exit 0
+        SRC="$CH"
+        ;;
+    *)
+        LIST="$(video_list)"
+        if [[ -z "$LIST" ]]; then
+            die "nenhum vídeo encontrado em: ${SEARCH_DIRS[*]}"
+        fi
+        [[ -n "$FIRST_DIR" ]] && echo "[loopgui] ${#LIST} vídeos; ${#SEARCH_DIRS[@]} pastas varridas"
+        PICK="$(printf '%s\n' "$LIST" | menu "vídeo ▸ " "digite para filtrar" \
+                | sed 's/^[[:space:]]*//')"
+        [[ -z "$PICK" ]] && exit 0
+        # ultima coluna e o caminho relativo a $HOME
+        SRC="$HOME/${PICK##*  }"
+        SRC="${SRC% }"
+        ;;
+    esac
+fi
+
+[[ -f "$SRC" ]] || die "não achei o arquivo: $SRC"
+add_hist "$SRC"
+
+# ---- passo 2: analisar
+echo "[loopgui] analisando: $SRC"
+ARGS=()
+ffprobe -v error -select_streams v:0 -show_entries stream=codec_type \
+        -of csv=p=0 "$SRC" 2>/dev/null | grep -q video || ARGS+=(--only-audio)
+
+OUT="$(mktemp)"; trap 'rm -f "$OUT"' EXIT
+"$DETECT" "${ARGS[@]}" "$SRC" 2>&1 | tee "$OUT"
+STATUS=${PIPESTATUS[0]}
+echo
+
+SEAMLESS=$(grep -oP 'emenda inicio/fim a \K[0-9.]+' "$OUT" | head -1)
+PERIOD=$(grep  -oP 'periodo\s+:\s+\K[0-9.]+' "$OUT" | head -1)
+START=$(grep   -oP 'comeca em\s+:\s+\K[0-9:]+' "$OUT" | head -1)
+UNIQ=$(grep    -oP 'TRECHO UNICO\s+:\s+\K[0-9:]+' "$OUT" | head -1)
+
+# ---- caso 1: ja e um loop continuo -> nao ha o que recortar
+if [[ -n "$SEAMLESS" ]]; then
+    echo "[loopgui] já é um loop contínuo (emenda em ${SEAMLESS} dB)."
+    CH="$(printf '%s\n' "📂  Abrir a pasta do arquivo
+❌  Sair" | menu "resultado ▸ " "o que fazer?")"
+    case "$CH" in
+        📂*|Abrir*) have xdg-open && xdg-open "$(dirname "$SRC")" & ;;
+    esac
+    notify "loopdetect" "já é um loop contínuo"
+    exit 0
+fi
+
+# ---- caso 2: sem loop
+if [[ $STATUS -ne 0 || -z "$PERIOD" ]]; then
+    die "não encontrei loop nem emenda contínua (veja a saída no terminal)"
+fi
+
+echo "[loopgui] período=$PERIOD  trecho=$UNIQ"
+NAME="$(basename "${SRC%.*}")__loop${PERIOD}s.mp4"
+
+# ---- passo 3: acoes
+while :; do
+    CH="$(printf '%s\n' \
+        "💾  Salvar trecho único  →  $OUTDIR/$NAME
+▶️   Abrir no player
+📋  Copiar o caminho
+📄  Ver o relatório completo
+📂  Abrir a pasta do original
+🔁  Nova análise
+─────────────
+❌  Sair" | menu "resultado ▸ " "o que fazer agora?")"
+    case "$CH" in
+    💾*|Salvar*)
+        if "$DETECT" "${ARGS[@]}" "$SRC" --cut "$OUTDIR/$NAME" --crf 14 \
+             >/dev/null 2>&1; then
+            echo "[loopgui] salvo: $OUTDIR/$NAME"
+            ls -lh "$OUTDIR/$NAME" | awk '{print "   tamanho:", $5}'
+            notify "loopdetect" "salvo: $NAME"
+        else
+            die "falha ao salvar"
+        fi
+        ;;
+    ▶️*|Abrir*)
+        P="$OUTDIR/$NAME"; [[ -f "$P" ]] || die "salve o trecho primeiro"
+        have mpv && { mpv "$P" & break; }
+        have vlc && { vlc "$P" & break; }
+        have xdg-open && { xdg-open "$P" & break; }
+        die "nenhum player encontrado"
+        ;;
+    📋*|Copiar*)
+        command -v wl-copy >/dev/null && wl-copy "$OUTDIR/$NAME" \
+            || xclip -selection clipboard "$OUTDIR/$NAME" 2>/dev/null
+        echo "[loopgui] copiado: $OUTDIR/$NAME"
+        ;;
+    📄*|Ver*)  less -R "$OUT" 2>/dev/null || cat "$OUT" ;;
+    📂*|Pasta*) have xdg-open && xdg-open "$(dirname "$SRC")" & ;;
+    🔁*|Nova*) exec "$0" ;;
+    *)  exit 0 ;;
+    esac
+done

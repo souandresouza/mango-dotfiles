@@ -2,8 +2,15 @@
 
 idlehint 300
 
-# Trava a tela após 5 min idle (com debounce/DND via wrapper)
-timeout 300 "$HOME/.local/bin/lock.sh"
+# Trava a tela após 5 min idle.
+# O gate idle_inhibit.sh sai 1 (= NAO pode travar) quando:
+#   - a inibicao manual esta ligada  -> botao do waybar / --toggle
+#   - ha audio tocando               -> com 5s de graca entre faixas, para
+#                                      nao travar no intervalo entre musicas
+# Por isso '&&': lock so roda quando o gate autoriza. Com '||' seria o
+# contrario - travaria justamente quando voce pediu para nao travar.
+# Enquanto o audio toca a tela escurece (idlehint) mas nao trava.
+timeout 300 "$HOME/.local/bin/idle_inhibit.sh && $HOME/.local/bin/lock.sh"
 
 # Desliga o vídeo após 10 min idle (descomente se o compositor suportar wlr-randr/DPMS)
 #timeout 600 "wlr-randr --output '*' --off" resume "wlr-randr --output '*' --on"

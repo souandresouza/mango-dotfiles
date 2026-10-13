@@ -1,0 +1,332 @@
+#!/usr/bin/env python3
+"""
+loopbatch - analisa videos em lote e extrai o trecho unico de cada um.
+
+Feito para colecoes de live-wallpapers / clips em loop, onde a pergunta
+sempre e a mesma: "ate onde vai o conteudo unico?".
+
+    loopbatch                                # ~/Downloads
+    loopbatch ~/Downloads ~/Vídeos           # varias pastas de uma vez
+    loopbatch ~/Videos -o ~/loops
+    loopbatch -j 4 --dry-run                 # so relatar, nao grava
+    loopbatch --reprocess                    # refaz inclusive os ja processados
+
+Cada arquivo vira uma linha na tabela final. O desfecho tem quatro casos:
+  - repeticao interna   -> recorta o trecho unico
+  - ja e loop continuo -> o arquivo inteiro ja e a unidade (emenda fim->inicio)
+  - sem loop e sem emenda
+  - cena parada        -> pode ser pulado com --skip-static
+
+Nao baixa nada: os arquivos precisam estar no disco.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+HOME = os.path.expanduser("~")
+DETECT = os.path.join(HOME, ".local", "bin", "loopdetect")
+VIDEO_EXT = (".mp4", ".mkv", ".webm", ".mov", ".avi", ".m4v", ".mpg", ".mpeg")
+# ~/Downloads tem prioridade; ~/Vídeos cobre o resto.
+DEFAULT_FOLDERS = [os.path.join(HOME, "Downloads"),
+                   os.path.join(HOME, "Vídeos")]
+
+# scene_change < 2.0/255 => a cena e praticamente estatica
+STATIC_LIMIT = 2.0
+
+
+def human(t):
+    t = max(0.0, float(t))
+    m, s = divmod(int(round(t)), 60)
+    h, m = divmod(m, 60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
+
+
+def find_videos(folder):
+    """Videos da pasta, ignorando as saidas que ESTA ferramenta gera."""
+    out = []
+    for root, dirs, files in os.walk(folder):
+        # nao descer nas pastas de saida
+        dirs[:] = [d for d in dirs
+                   if not d.startswith(".") and d.lower() != "loops"]
+        for f in sorted(files):
+            if not f.lower().endswith(VIDEO_EXT):
+                continue
+            if "__loop" in f:          # saida nossa: nao reprocessar
+                continue
+            out.append(os.path.join(root, f))
+    return sorted(out)
+
+
+def already_done(path, outdir):
+    """Ja extraiamos esse arquivo antes?"""
+    if not os.path.isdir(outdir):
+        return False
+    tag = os.path.splitext(os.path.basename(path))[0]
+    return any(f.startswith(tag + "__") and f.endswith(".mp4")
+               for f in os.listdir(outdir))
+
+
+def analyze_one(args, path, outdir):
+    name = os.path.splitext(os.path.basename(path))[0]
+    dest = os.path.join(outdir, name + "__loop.mp4")
+
+    cmd = [DETECT, path, "--json"]
+    if not args.dry_run:
+        cmd += ["--cut", dest, "--crf", str(args.crf)]
+    if args.only_video:
+        cmd.append("--only-visual")
+    if args.skip_static and not args.dry_run:
+        cmd += ["--max-scene-change", str(STATIC_LIMIT)]
+
+    t0 = time.time()
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=args.timeout)
+    except subprocess.TimeoutExpired:
+        return {"file": name, "ok": False, "erro": f"timeout {args.timeout}s"}
+
+    raw = r.stdout
+    marker = "@@JSON@@"
+    if marker not in raw:
+        return {"file": name, "ok": False,
+                "erro": (r.stderr or raw).strip().splitlines()[-1][:70]
+                       if (r.stderr or raw).strip() else f"exit {r.returncode}"}
+
+    payload = raw.split(marker)[-1].strip().splitlines()[0]
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError as e:
+        return {"file": name, "ok": False, "erro": f"JSON invalido: {e}"}
+
+    data.update({
+        "ok": True,               # rodou sem erro (pode ou nao ter loop)
+        "file": name,
+        "secs": round(time.time() - t0, 1),
+        "dest": dest if data.get("loop") and not args.dry_run else None,
+    })
+    # o --cut pode ter sido suprimido (--max-scene-change): sem arquivo na saida
+    if data.get("dest") and not os.path.exists(data["dest"]):
+        data["dest"] = None
+        data["cut_skipped"] = True
+    if data.get("dest"):
+        try:
+            data["size"] = os.path.getsize(data["dest"])
+        except OSError:
+            data["size"] = None
+    return data
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="extrai o trecho unico de todos os videos de uma pasta",
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("folder", nargs="*", default=None,
+                    help="uma ou mais pastas (padrao: ~/Downloads e ~/Vídeos)")
+    ap.add_argument("-o", "--outdir", default=None,
+                    help="onde gravar (padrao: <pasta>/loops de cada arquivo)")
+    ap.add_argument("-j", "--jobs", type=int, default=2,
+                    help="analises em paralelo (padrao 2; cada um decodifica video)")
+    ap.add_argument("--crf", type=int, default=16)
+    ap.add_argument("--timeout", type=int, default=1800,
+                    help="segundos por arquivo antes de desistir")
+    ap.add_argument("--dry-run", action="store_true", help="so relatar")
+    ap.add_argument("--reprocess", action="store_true",
+                    help="refazer arquivos ja processados")
+    ap.add_argument("--only-video", action="store_true",
+                    help="ignorar analise de audio (mais rapido)")
+    ap.add_argument("--skip-static", action="store_true",
+                    help="nao extrair cenas praticamente estaticas")
+    args = ap.parse_args()
+
+    raw = args.folder or DEFAULT_FOLDERS
+    folders = []
+    for f in raw:
+        p = os.path.abspath(os.path.expanduser(f))
+        if os.path.isdir(p):
+            folders.append(p)
+        elif os.path.exists(p):
+            print(f"ERRO: nao e uma pasta: {p}", file=sys.stderr)
+            return 2
+        else:
+            print(f"ERRO: pasta nao existe: {p}", file=sys.stderr)
+            return 2
+    if not folders:
+        print("ERRO: nenhuma pasta valida.", file=sys.stderr)
+        return 2
+
+    forced_out = os.path.abspath(os.path.expanduser(args.outdir)) \
+        if args.outdir else None
+
+    # ---- coleta, sem duplicar entre pastas
+    files, seen = [], set()
+    for f in folders:
+        for v in find_videos(f):
+            key = os.path.realpath(v)
+            if key not in seen:
+                seen.add(key)
+                files.append(v)
+    files.sort()
+
+    if not files:
+        print("nenhum video encontrado em:")
+        for f in folders:
+            print(f"  {f}")
+        return 1
+
+    def outdir_of(path):
+        return forced_out or os.path.join(os.path.dirname(path), "loops")
+
+    if not args.dry_run:
+        for d in {outdir_of(f) for f in files}:
+            os.makedirs(d, exist_ok=True)
+
+    # ja processados? (so faz sentido sem --outdir forcado)
+    if not args.reprocess and not forced_out:
+        before = len(files)
+        files = [f for f in files if not already_done(f, outdir_of(f))]
+        if len(files) < before:
+            print(f"({before - len(files)} ja processados, pulando; "
+                  f"--reprocess para refazer)\n")
+
+    print("pastas:")
+    for f in folders:
+        print(f"  {f}")
+    print(f"videos: {len(files)}   jobs: {args.jobs}"
+          f"{'   (dry-run: nada sera gravado)' if args.dry_run else ''}\n")
+
+    t0 = time.time()
+    results = []
+    with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as ex:
+        futs = {ex.submit(analyze_one, args, f, outdir_of(f)): f for f in files}
+        done = 0
+        for fut in as_completed(futs):
+            r = fut.result()
+            results.append(r)
+            done += 1
+            if not r.get("ok"):
+                mark, note = "✗", r.get("erro", "falhou")
+            elif r.get("loop"):
+                mark = "✓"
+                note = f"{r['period']:g}s"
+                if r.get("cut_skipped"):
+                    note += " (cena parada, sem corte)"
+            else:
+                mark, note = "·", "sem loop"
+            print(f"  [{done}/{len(files)}] {mark} {r['file'][:42]:<42} {note}")
+
+    # ------------------------------------------------------------- resumo
+    results.sort(key=lambda r: r["file"].lower())
+    loops = [r for r in results if r.get("loop")]
+    seamless = [r for r in results if r.get("ok") and not r.get("loop")
+                and r.get("seamless")]
+    noloop = [r for r in results if r.get("ok") and not r.get("loop")
+              and not r.get("seamless")]
+    failed = [r for r in results if not r.get("ok")]
+
+    w = max((len(r["file"]) for r in results), default=10)
+    w = max(w, 10)
+    print("\n" + "=" * (w + 56))
+    print(f"{'arquivo':<{w}}  {'periodo':>8s}  {'trecho unico':>13s}  "
+          f"{'saida':>7s}  obs")
+    print("-" * (w + 56))
+    for r in results:
+        name = r["file"][:w]
+        if r.get("loop"):
+            per = f"{r['period']:g}s"
+            seg = f"{human(r['loop_start'])}-{human(r['unique_end'])}"
+            sz = (f"{r['size']/1e6:.0f}M" if r.get("size") else "-")
+            obs = []
+            if r.get("static_scene"):
+                obs.append("cena parada")
+            if r.get("drift_last") is not None and r["drift_last"] < 0.85:
+                obs.append(f"deriva k={r['drift_last']:.2f}")
+            if r.get("seam_psnr") and r["seam_psnr"] >= 37:
+                obs.append("ja emenda")
+            if r.get("cut_skipped"):
+                obs.append("sem corte")
+            if not obs:
+                obs.append("ok")
+            print(f"{name:<{w}}  {per:>8s}  {seg:>13s}  {sz:>7s}  {', '.join(obs)}")
+        elif r.get("ok") and r.get("seamless"):
+            print(f"{name:<{w}}  {'-':>8s}  {'INTEIRO':>13s}  {'-':>7s}  "
+                  f"ja e loop continuo ({r['seam_psnr']:.0f} dB) — nao recortar")
+        elif r.get("ok"):
+            print(f"{name:<{w}}  {'-':>8s}  {'-':>13s}  {'-':>7s}  "
+                  f"sem loop, sem emenda")
+        else:
+            print(f"{name:<{w}}  {'-':>8s}  {'-':>13s}  {'-':>7s}  ERRO: "
+                  f"{r.get('erro', '')[:24]}")
+    print("=" * (w + 56))
+    print(f"{len(loops)} com repeticao   "
+          f"{sum(1 for r in loops if r.get('dest'))} recortados   "
+          f"{len(seamless)} ja sao loops continuos   "
+          f"{len(noloop)} sem loop   {len(failed)} com erro   "
+          f"({time.time()-t0:.0f}s)")
+
+    cut = [r for r in loops if r.get("dest")]
+    if cut and not args.dry_run:
+        saved = sum(r["size"] or 0 for r in cut)
+        orig = 0
+        sizes = {os.path.splitext(os.path.basename(f))[0]: os.path.getsize(f)
+                 for f in files}
+        for r in cut:
+            orig += sizes.get(r["file"], 0)
+        if orig:
+            print(f"economia: {orig/1e6:.1f}MB -> {saved/1e6:.1f}MB "
+                  f"({100*(1-saved/orig):.0f}% a menos, em {len(cut)} arquivo(s))")
+        # um resumo por pasta de saida (com varias pastas de entrada, cada
+        # arquivo vai para o "loops/" ao lado do proprio original)
+        groups = {}
+        for r in results:
+            groups.setdefault(outdir_of(r.get("source") or ""), []).append(r)
+        print("\nrelatorio completo:")
+        for od in sorted(groups):
+            dest = os.path.join(od, "resumo.txt")
+            with open(dest, "w") as fh:
+                fh.write(f"loopbatch\n"
+                         f"gerado em {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
+                         f"{'='*60}\n\n")
+                for r in groups[od]:
+                    fh.write(report_entry(r))
+            print(f"  {dest}")
+    return 0
+
+
+def report_entry(r):
+    if r.get("loop") and r.get("dest"):
+        s = (f"{r['file']}\n"
+             f"  periodo      : {r['period']:g}s\n"
+             f"  trecho unico : {human(r['loop_start'])} -> "
+             f"{human(r['unique_end'])}  ({r['unique_len']:g}s)\n"
+             f"  repeticoes   : {r['repeats']:g}x\n"
+             f"  similaridade : {r['sim']:g} vs controle {r['ctrl']:g}\n")
+        if r.get("scene_change") is not None:
+            s += (f"  mudanca cena : {r['scene_change']:g}/255"
+                  f"{'  (CENA PARADA)' if r['static_scene'] else ''}\n")
+        if r.get("seam_psnr") is not None:
+            s += f"  emenda       : {r['seam_psnr']:g} dB\n"
+        if r.get("drift_last") is not None:
+            s += f"  deriva       : {r['drift_last']:g} no ultimo ciclo\n"
+        return s + f"  saida        : {r['dest']}\n\n"
+    if r.get("loop"):
+        why = ("cena praticamente estatica" if r.get("static_scene")
+               else "corte suprimido")
+        return (f"{r['file']}\n  periodo      : {r['period']:g}s\n"
+                f"  trecho unico : {human(r['loop_start'])} -> "
+                f"{human(r['unique_end'])}\n  SEM CORTE    : {why}\n\n")
+    if r.get("ok") and r.get("seamless"):
+        return (f"{r['file']}\n"
+                f"  ja e um LOOP CONTINUO (emenda a {r['seam_psnr']:g} dB, "
+                f"{r['seam_diff']:g}/255)\n"
+                f"  use o arquivo inteiro — nao ha repeticao interna a remover\n\n")
+    if r.get("ok"):
+        return f"{r['file']}\n  sem loop, sem emenda\n\n"
+    return f"{r['file']}\n  ERRO: {r.get('erro', '')}\n\n"
+
+
+if __name__ == "__main__":
+    sys.exit(main())

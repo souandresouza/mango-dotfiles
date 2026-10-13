@@ -1,10 +1,24 @@
 [Default Applications]
-text/x-shellscript=dev.zed.Zed.desktop
+application/x-theme=code.desktop
+text/plain=code.desktop
+inode/directory=dev.cadrocfile.Files.desktop
+x-scheme-handler/file=dev.cadrocfile.Files.desktop
+image/png=imv-dir.desktop
 
 [Added Associations]
-text/x-shellscript=dev.zed.Zed.desktop;
+application/x-theme=code.desktop;
+text/plain=dev.zed.Zed.desktop;code.desktop;
+application/schema+json=code.desktop;
+application/x-shellscript=code.desktop;kitty-open.desktop;
+inode/directory=dev.cadrocfile.Files.desktop;
+x-scheme-handler/file=dev.cadrocfile.Files.desktop;
+image/png=imv-dir.desktop;
+text/x-shellscript=dev.zed.Zed.desktop;kitty-open.desktop;
+application/octet-stream=dev.zed.Zed.desktop;
+application/xml=dev.zed.Zed.desktop;
+text/css=dev.zed.Zed.desktop;
+application/json=dev.zed.Zed.desktop;
+image/jpeg=imv-dir.desktop;
 application/x-executable=dev.zed.Zed.desktop;
-image/png=imv-dir.desktop;imv.desktop;
-text/csv=libreoffice-calc.desktop;
-text/plain=dev.zed.Zed.desktop;
-application/x-bittorrent=org.qbittorrent.qBittorrent.desktop;
+application/x-zerosize=dev.zed.Zed.desktop;
+text/x-python=dev.zed.Zed.desktop;

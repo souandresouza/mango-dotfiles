@@ -8,11 +8,9 @@
     "control-center-margin-left": 0,
     "notification-body-image-height": 200,
     "notification-body-image-width": 200,
-
     "timeout": 4,
     "timeout-low": 2,
     "timeout-critical": 0,
-
     "fit-to-screen": true,
     "_comment": "If control-center-width changes, update min-width of .widget-buttons-grid flowboxchild > button in style.css: (width - 44) / 4 - 12 - (5..10). Currently 450 -> 84.",
     "control-center-width": 450,
@@ -20,10 +18,8 @@
     "keyboard-shortcuts": true,
     "image-visibility": "when-available",
     "transition-time": 300,
-
     "hide-on-clear": false,
     "hide-on-action": true,
-
     "widgets": [
         "title",
         "mpris",
@@ -52,8 +48,7 @@
         "backlight": {
             "label": "󰖨"
         },
-        "notifications": {
-        },
+        "notifications": {},
         "buttons-grid": {
             "actions": [
                 {
@@ -69,6 +64,13 @@
                     "active": true,
                     "command": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle >/dev/null 2>&1",
                     "update-command": "wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q 'MUTED' && echo true || echo false"
+                },
+                {
+                    "label": "",
+                    "type": "toggle",
+                    "active": true,
+                    "command": "$HOME/.local/bin/idle_inhibit.sh --toggle >/dev/null 2>&1",
+                    "update-command": "sh -c '[[ -f $HOME/.local/state/cadrocspace/state/idle_inhibit ]] && [[ $(cat $HOME/.local/state/cadrocspace/state/idle_inhibit) == 1 ]] && echo true || echo false'"
                 }
             ]
         },
