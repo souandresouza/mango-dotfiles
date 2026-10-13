@@ -1,9 +1,11 @@
 lavat-git
 localsend
 mangowm-git
+mpvpaper
 python-pywal
 swaylock-effects
 tty-clock
-waybar-git
+wayfreeze
+wl-screenrec-git
 yay
-yay-debug
+zsh-abbr

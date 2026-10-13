@@ -240,8 +240,11 @@ Theme`, pointing at `~/.config/qBittorrent/themes/pywal/config.json`.
 
 To export your current package list:
 ```bash
-pacman -Qqe | grep -v "$(pacman -Qqm)" > lista_pacman.txt
-pacman -Qqm > lista_aur.txt
+# comm -23 subtrai os foreign por linha exata (e sai ordenado);
+# `grep -v "$(pacman -Qqm)"` também funciona, mas não ordena e pode
+# excluir um pacote oficial cujo nome contenha o de um AUR.
+comm -23 <(pacman -Qqe | sort) <(pacman -Qqm | sort) > lista_pacman.txt
+pacman -Qqm | sort > lista_aur.txt
 ```
 
 ---
