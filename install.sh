@@ -176,7 +176,6 @@ copy_configs() {
         gtk-3.0
         gtk-4.0
         zathura
-        xsettingsd
         nwg-look
         opencode
     )

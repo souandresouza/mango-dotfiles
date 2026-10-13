@@ -48,7 +48,6 @@ mango-dotfiles/
 ├── gtk-3.0/                 # GTK3 settings & bookmarks
 ├── gtk-4.0/                 # GTK4 settings & CSS
 ├── zathura/                 # PDF viewer config
-├── xsettingsd/              # X11 settings daemon
 ├── nwg-look/                # GTK theme utility
 ├── scripts/                 # Custom shell scripts (instalados em ~/.local/bin)
 │   ├── colors/              # Pywal color integration
@@ -258,14 +257,14 @@ yay -S --needed - < lista_aur.txt
 
 # 2. Link configs with stow
 mkdir -p ~/.config
-stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock swayidle swaync fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura xsettingsd nwg-look
+stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock swayidle swaync fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura nwg-look
 
 # 3. Copy wallpapers & scripts (scripts vão para ~/.local/bin)
 cp -r wallpapers ~/Pictures/
 mkdir -p ~/.local/bin
-cp scripts/*.sh ~/.local/bin/
+cp scripts/*.sh scripts/loop* ~/.local/bin/
 cp scripts/colors/*.sh ~/.local/bin/
-chmod +x ~/.local/bin/*.sh
+chmod +x ~/.local/bin/*
 
 # 4. Set user directories
 cp user-dirs.dirs user-dirs.locale ~/.config/
