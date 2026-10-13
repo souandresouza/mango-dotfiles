@@ -72,7 +72,14 @@ if $APPLY; then
         hex=$(magick "$preview" -format '%[hex:p{0,0}]' info: 2>/dev/null)
         color="${hex:-$color}"
     }
-    "$SCRIPT_DIR/gen_style.sh" "$color" && "$SCRIPT_DIR/apply_style.sh"
+    # gen_style.sh não é mais distribuído (o pywal cuida das cores via
+    # sequencia.sh). Guarda no mesmo estilo do apply_style.sh, que já protege
+    # cava_manager.sh e desktop_icons_manager.sh: sem ele o --apply engolia a
+    # falha no && e apply_style.sh nunca rodava.
+    if [[ -f "$SCRIPT_DIR/gen_style.sh" ]]; then
+        "$SCRIPT_DIR/gen_style.sh" "$color" || true
+    fi
+    "$SCRIPT_DIR/apply_style.sh"
     rm -f "$preview"
     exit 0
 fi
