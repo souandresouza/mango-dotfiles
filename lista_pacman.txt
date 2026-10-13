@@ -58,7 +58,6 @@ libpulse
 libreoffice-fresh
 linux
 linux-firmware
-mako
 materia-gtk-theme
 mkinitcpio
 mpv
@@ -98,6 +97,8 @@ speech-dispatcher
 sudo
 swaybg
 swayidle
+swaync
+swaylock-effects
 telegram-desktop
 timeshift
 tlp

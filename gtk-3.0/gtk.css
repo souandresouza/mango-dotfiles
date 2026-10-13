@@ -1,0 +1,288 @@
+@import url("../../.local/state/cadrocspace/theme/colors.css");
+
+/* ==========================================
+   CADROCFILE WINDOW CONFIGURATION
+   ========================================== */
+
+* {
+    border: none;
+    font-size: small;
+}
+
+.cadrocfile {
+    background-color: rgba(15, 15, 15, 0.9);
+}
+
+.cadrocfile .view {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cadrocfile .view .cell {
+    background-color: transparent;
+}
+
+.cadrocfile .view:selected {
+    background-color: @accent_color;
+}
+
+.cadrocfile headerbar {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.cadrocfile menubar {
+    background-color: transparent;
+    padding: 10px 0 0 10px;
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cadrocfile menubar > menuitem {
+    border-radius: 4px;
+    padding: 4px 12px;
+    box-shadow: none;
+}
+
+.cadrocfile menubar > menuitem:hover {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cadrocfile toolbar {
+    border-radius: 4px;
+    margin: 10px 10px 5px 10px;
+    padding: 10px;
+    background-color: transparent;
+}
+
+.cadrocfile toolbar button {
+    padding: 2px 10px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cadrocfile toolbar button:hover {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cadrocfile toolbar button:checked,
+.cadrocfile toolbar button:active {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cadrocfile .sidebar {
+    background-color: transparent;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.cadrocfile .sidebar .cell:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.cadrocfile .sidebar .cell:selected {
+    background-color: @accent_color;
+    border-radius: 4px;
+}
+
+.cadrocfile .sidebar treeview row {
+    padding: 6px 1px;
+}
+
+.cadrocfile .sidebar treeview row:selected {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cadrocfile .sidebar scrollbar {
+    background-color: transparent;
+}
+
+.cadrocfile .sidebar scrollbar, 
+.cadrocfile .sidebar scrollbar slider {
+    min-width: 6px;
+    min-height: 6px;
+}
+
+.cadrocfile progressbar progress {
+    background-color: @accent_color;
+}
+
+.cadrocfile .view:selected,
+.cadrocfile iconview:selected {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+    border-radius: 0;
+}
+
+.cadrocfile statusbar {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    margin: 2px 0 2px 0;
+    padding: 2px;
+}
+
+.cadrocfile menu {
+    background-color: rgba(20, 20, 20, 0.95);
+    border-radius: 4px;
+}
+
+.cadrocfile notebook > header {
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 4px 8px;
+    margin: 0px 10px 5px 10px;
+    border-radius: 4px;
+    border: none;
+}
+
+.cadrocfile notebook > header > tabs {
+    background-color: transparent;
+}
+
+.cadrocfile notebook > header > tabs > tab {
+    padding: 6px 16px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin: 0px 4px;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    transition: all 150ms ease;
+}
+
+.cadrocfile notebook > header > tabs > tab:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.cadrocfile notebook > header > tabs > tab:checked {
+    background-color: @accent_color;
+    color: #000000;
+}
+
+.cadrocfile notebook > header > tabs > tab button {
+    padding: 2px;
+    padding-left: 6px;
+    background-color: transparent;
+    border-radius: 4px;
+    border: none;
+    color: inherit;
+}
+
+.cadrocfile notebook > header > tabs > tab button:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.cadrocfile paned,
+.cadrocfile paned separator,
+.cadrocfile separator,
+.cadrocfile notebook,
+.cadrocfile notebook stack {
+    border-style: none;
+    border-width: 0;
+    box-shadow: none;
+    outline: 0;
+    background-image: none;
+    background-color: transparent;
+}
+
+.cadrocfile .path-bar button {
+    background-color: transparent;
+    background: none;
+    box-shadow: none;
+    border: 2px solid transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+    padding: 3px 6px;
+}
+
+.cadrocfile .path-bar button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cadrocfile .path-bar button:checked {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.cadrocfile toolbar entry {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+    box-shadow: none;
+    padding: 1px;
+}
+
+.cadrocfile toolbar entry selection {
+    background: rgba(0, 0, 0, 0.9);
+    color: @accent_color;
+}
+
+.cadrocfile treeview header button {
+    background-color: transparent;
+    padding: 6px 10px;
+    font-weight: bold;
+}
+
+.cadrocfile treeview header button:hover {
+    background-color: @accent_color;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* ==========================================
+   MENU CONFIGURATION (Right Click Menu)
+   ========================================== */
+
+menu, .popup {
+    background-color: rgba(26, 26, 26, 0.9);
+}
+
+menu menuitem {
+    color: @accent_color;
+    transition: background-color 300ms ease;
+}
+
+menu menuitem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+menu separator {
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 6px 10px;
+    min-height: 1px;
+}
+
+
+/* ====================================
+   FILE CHOOSER POPUP
+   ==================================== */
+
+filechooser placessidebar row {
+    min-height: 38px;
+    padding: 0px 8px;
+    margin: 4px 4px;
+}
+
+filechooser treeview row {
+    min-height: 34px;
+}
+
+filechooser scrolledwindow {
+    margin: 8px;
+}
+
+filechooser headerbar button {
+    padding: 6px 16px;
+    margin: 0px 4px;
+}
+
+filechooser paned {
+    margin: 12px 16px;
+}
+
+filechooser actionbar {
+    margin: 0px 16px 12px 16px;
+}
+
+/* @import url("../../.local/state/cadrocspace/theme/opaque/gtk.css"); */

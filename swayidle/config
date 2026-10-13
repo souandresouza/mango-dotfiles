@@ -3,13 +3,13 @@
 idlehint 300
 
 # Trava a tela após 5 min idle (com debounce/DND via wrapper)
-timeout 300 "$HOME/.config/scripts/lock.sh"
+timeout 300 "$HOME/.local/bin/lock.sh"
 
 # Desliga o vídeo após 10 min idle (descomente se o compositor suportar wlr-randr/DPMS)
 #timeout 600 "wlr-randr --output '*' --off" resume "wlr-randr --output '*' --on"
 
-lock "$HOME/.config/scripts/lock.sh"
-unlock "$HOME/.config/scripts/unlock.sh"
+lock "$HOME/.local/bin/lock.sh"
+unlock "$HOME/.local/bin/unlock.sh"
 
-before-sleep "$HOME/.config/scripts/lock.sh"
-after-resume "$HOME/.config/scripts/unlock.sh"
+before-sleep "$HOME/.local/bin/lock.sh"
+after-resume "$HOME/.local/bin/unlock.sh"

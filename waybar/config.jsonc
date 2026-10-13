@@ -1,5 +1,8 @@
-[
-  {
+{
+  "include": [
+    "$HOME/.config/waybar/module/notification_module",
+    "$HOME/.config/waybar/module/workspace_module"
+  ],
     "name": "topbar",
     "layer": "top",
     "position": "top",
@@ -11,20 +14,21 @@
     "gtk-layer-shell": true,
     "reload_style_on_change": true,
     "modules-left": [
-      "ext/workspaces",
-      "mango/layout",
+      "group/hworkspaces",
       "custom/cmus",
-      "custom/window"
+      "custom/cavaunderbar",
     ],
     "modules-center": [
       "clock"
     ],
     "modules-right": [
-      "idle_inhibitor",
+      "backlight",
       "network",
       "wireplumber",
-      "bluetooth",
-      "battery"
+      "custom/recorder",
+      "custom/recordertime",
+      "battery",
+      "custom/notification"
     ],
     "ext/workspaces": {
       "format": "{name}",
@@ -53,13 +57,6 @@
         "on-click-right": "mode",
         "on-scroll-up": "shift_up",
         "on-scroll-down": "shift_down"
-      }
-    },
-    "idle_inhibitor": {
-      "format": "{icon}",
-      "format-icons": {
-        "activated": "🟢",
-        "deactivated": "🔴"
       }
     },
     "network": {
@@ -111,11 +108,6 @@
         "critical": 15
       }
     },
-    "mango/layout": {
-      "format": "{}"
-      // "format-S": "Scroller",
-      // "format-T": "Tile"
-    },
     "custom/cmus": {
       "exec": "~/.config/scripts/music-tui-status.sh",
       "interval": 5,
@@ -124,11 +116,33 @@
       "max-length": 20,
       "ellipsis": "start"
     },
-    "custom/window": {
-      "exec": "~/.config/scripts/mango-window-marquee.sh",
-      "return-type": "json",
-      "format": "{}",
-      "tooltip": false
-    }
+    "custom/recorder": {
+      "format": "",
+      "on-click": "$HOME/.local/bin/record.sh",
+      "tooltip": true,
+      "tooltip-format": "Start/Stop recording"
+    },
+    "custom/recordertime": {
+      "exec": "if [ -f /tmp/recording_time ]; then cat /tmp/recording_time; fi",
+      "interval": 1,
+      "format": "{text}",
+      "return-type": "plain",
+      "if-file-exists": "/tmp/recording_pid",
+      "hide-empty-text": true,
+      "on-click": "$HOME/.local/bin/record.sh",
+      "tooltip": true,
+      "tooltip-format": "Stop recording"
+    },
+    "backlight": {
+      "format": "{icon} {percent}%",
+      "format-icons": ["", "", "", "", "", "", "", "", ""],
+      "on-scroll-up": "brightnessctl set 1%+",
+      "on-scroll-down": "brightnessctl set 1%-",
+      "on-click": "$HOME/.local/bin/nightlight_toggle.sh",
+      "tooltip-format": "Brightness: {percent}%"
+    },
+    "custom/cavaunderbar": {
+      "format": "󰝚",
+      "tooltip-format": "Music Visualizer"
+    },
   }
-]

@@ -1,10 +1,10 @@
 #!/bin/bash
 # sequencia.sh -- executa scripts com verificação
 
-$HOME/.config/scripts/colors/cava-colors.sh
-$HOME/.config/scripts/colors/fuzzel-colors.sh
-$HOME/.config/scripts/colors/mako-colors.sh
-$HOME/.config/scripts/colors/mango-colors.sh
-$HOME/.config/scripts/colors/waybar-colors.sh
-$HOME/.config/scripts/colors/zathura-colors.sh
-$HOME/.config/scripts/colors/swaylock-colors.sh
+$HOME/.local/bin/cava-colors.sh
+$HOME/.local/bin/fuzzel-colors.sh
+$HOME/.local/bin/mango-colors.sh
+$HOME/.local/bin/waybar-colors.sh
+$HOME/.local/bin/zathura-colors.sh
+$HOME/.local/bin/swaylock-colors.sh
+$HOME/.local/bin/swaync-colors.sh

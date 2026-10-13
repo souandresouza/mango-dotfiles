@@ -48,7 +48,7 @@ NC='\033[0m'
 # ── Paths ─────────────────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="${HOME}/.config"
-BIN_DIR="${HOME}/bin"
+BIN_DIR="${HOME}/.local/bin"
 WALLPAPER_DIR="${HOME}/.config/wallpapers"
 
 PACMAN_LIST="${SCRIPT_DIR}/lista_pacman.txt"
@@ -145,7 +145,6 @@ create_directories() {
         "$CONFIG_DIR"
         "$BIN_DIR"
         "$WALLPAPER_DIR"
-        "$CONFIG_DIR/scripts/colors"
     )
 
     for dir in "${dirs[@]}"; do
@@ -167,7 +166,8 @@ copy_configs() {
         mango
         waybar
         swaylock
-        mako
+        swayidle
+        swaync
         fuzzel
         kitty
         cava
@@ -179,7 +179,6 @@ copy_configs() {
         xsettingsd
         nwg-look
         opencode
-        scripts
     )
 
     for cfg in "${configs[@]}"; do
@@ -199,6 +198,36 @@ copy_configs() {
 
         run "cp -r '$src' '$dest'"
         success "Copied: $cfg -> $dest"
+    done
+}
+
+copy_scripts() {
+    header "Copying Scripts"
+
+    local scripts_dir="${SCRIPT_DIR}/scripts"
+    if [[ ! -d "$scripts_dir" ]]; then
+        warn "Skipping (not found): $scripts_dir"
+        return
+    fi
+
+    # Scripts de cor vão para ~/.local/bin/ junto com o resto (o
+    # sequencia.sh chama tudo por caminho absoluto a partir dali).
+    local subdirs=(colors)
+
+    for script in "$scripts_dir"/*.sh; do
+        [[ -f "$script" ]] || continue
+        run "cp '$script' '$BIN_DIR/' && chmod +x '$BIN_DIR/$(basename "$script")'"
+        success "Copied script: $(basename "$script") -> $BIN_DIR/"
+    done
+
+    for sub in "${subdirs[@]}"; do
+        local src="${scripts_dir}/${sub}"
+        [[ -d "$src" ]] || continue
+        for script in "$src"/*.sh; do
+            [[ -f "$script" ]] || continue
+            run "cp '$script' '$BIN_DIR/' && chmod +x '$BIN_DIR/$(basename "$script")'"
+            success "Copied script: ${sub}/$(basename "$script") -> $BIN_DIR/"
+        done
     done
 }
 
@@ -305,14 +334,14 @@ post_install() {
     echo ""
     echo "  1. Log out and log back in for all changes to take effect."
     echo "  2. Set a wallpaper to trigger pywal colors:"
-    echo -e "     ${CYAN}~/.config/scripts/random-wallpaper.sh${NC}"
+    echo -e "     ${CYAN}~/.local/bin/random-wallpaper.sh${NC}"
     echo "  3. Start MangoWM from your display manager or run:"
     echo -e "     ${CYAN}mango${NC}"
     echo ""
     echo -e "${BOLD}Common troubleshooting:${NC}"
     echo ""
     echo "  - Waybar not starting: check if waybar-git is installed from AUR"
-    echo "  - Colors not applying: run ~/.config/scripts/colors/mango-colors.sh"
+    echo "  - Colors not applying: run ~/.local/bin/sequencia.sh"
     echo "  - Fonts missing: install a nerd-font package"
     echo ""
     echo -e "${GREEN}${BOLD}Enjoy your MangoWM setup!${NC}"
@@ -347,6 +376,7 @@ main() {
 
     create_directories
     copy_configs
+    copy_scripts
     copy_assets
     copy_files
     set_permissions

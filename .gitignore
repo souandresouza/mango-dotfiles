@@ -16,3 +16,16 @@ cmus/autosave
 mango/env.local
 opencode/service.json
 cmus/lib.pl
+
+# Backups e temporários de config
+*.bak
+*.bak.*
+mango/.bak*
+
+# mako removido do setup (SwayNC é o daemon de notificações)
+mako/
+
+# Runtime gerado (pywal/cadrocspace recriam no boot)
+cava/config_waybar
+cava/cache/
+swaync/colors-swaync.css

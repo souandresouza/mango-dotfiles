@@ -14,14 +14,30 @@ HISTORY_SIZE=10
 # FUNÇÕES
 # ============================================
 
-# Detecta resolução da tela
+# Detecta resolução da tela (usado só para log; o swaybg usa "-m fill")
 detect_resolution() {
     local res=""
 
-    if command -v hyprctl &>/dev/null && command -v jq &>/dev/null; then
-        local hypr_output=$(hyprctl monitors -j 2>/dev/null 2>&1)
-        if [[ -n "$hypr_output" ]] && echo "$hypr_output" | jq -e . >/dev/null 2>&1; then
-            res=$(echo "$hypr_output" | jq -r '.[] | select(.focused == true) | "\(.width)x\(.height)"' 2>/dev/null | head -1)
+    # MangoWM: IPC 'get all-monitors' -> {"monitors":[{"name":..,"width":..,"height":..,"active":true}]}
+    local mango_pid
+    mango_pid=$(pgrep -x mango 2>/dev/null | head -1)
+    if [[ -n "$mango_pid" ]]; then
+        local sock="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/mango-${mango_pid}.sock"
+        if [[ -S "$sock" ]]; then
+            res=$(printf 'get all-monitors\n' | timeout 2 python3 -c '
+import socket, sys
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.settimeout(1.5)
+s.connect(sys.argv[1])
+s.sendall(b"get all-monitors\n")
+buf = b""
+while not buf.endswith(b"\n"):
+    c = s.recv(8192)
+    if not c:
+        break
+    buf += c
+sys.stdout.write(buf.decode(errors="replace"))
+' "$sock" 2>/dev/null | jq -r '.monitors[] | select(.active) | "\(.width)x\(.height)"' 2>/dev/null | head -1)
         fi
     fi
 
@@ -29,11 +45,7 @@ detect_resolution() {
         res=$(wlr-randr 2>/dev/null | grep -oP 'current mode: \K\d+x\d+' | head -1)
     fi
 
-    if [[ -z "$res" ]] && command -v xrandr &>/dev/null; then
-        res=$(xrandr --current 2>/dev/null | grep '*' | head -1 | awk '{print $1}')
-    fi
-
-    echo "${res:-1920x1080}"
+    echo "${res:-desconhecida}"
 }
 
 # Verifica e cria diretórios necessários
@@ -178,7 +190,7 @@ main() {
     cp "$SELECTED" "$CURRENT_WALLPAPER" 2>/dev/null || true
 
     wal -i "$SELECTED"
-    $HOME/.config/scripts/sequencia.sh
+    $HOME/.local/bin/sequencia.sh
     echo "✨ Concluído!" >&2
 }
 

@@ -31,8 +31,9 @@ fi
 
 date +%s >"$DEBOUNCE_FILE"
 
-# pausa notificações (best-effort; requer seção [mode=do-not-disturb] no mako, se quiser efeito real)
-makoctl mode -a do-not-disturb 2>/dev/null || :
+# pausa notificações durante o bloqueio (best-effort).
+# Equivalente no SwayNC: --dnd-on / --dnd-off (mako não é mais usado).
+swaync-client --dnd-on >/dev/null 2>&1 || :
 
 # swaylock: tenta a config completa; se falhar no primeiro segundo, cai para fundo preto simples
 if ! swaylock -f "$@"; then

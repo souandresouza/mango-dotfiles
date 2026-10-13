@@ -1,0 +1,531 @@
+/* SwayNC — tema baseado no wallpaper atual (via Pywal).
+   As cores vêm de colors-swaync.css, gerado por ~/.local/bin/swaync-colors.sh.
+   Este arquivo é o lugar para editar o layout/forma; as cores, no script. */
+
+@import 'colors-swaync.css';
+
+window {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 14px;
+}
+
+notificationwindow,
+blankwindow {
+    background: transparent;
+}
+
+/* ---- Base das notificações ---- */
+
+.notification-row {
+    background: none;
+    outline: none;
+}
+
+.notification-row:focus {
+    background: @accent-soft;
+}
+
+.notification-row .notification-background {
+    padding: 6px 12px;
+}
+
+.notification-row .notification-background .notification {
+    background: @bg-cc;
+    border: 1px solid @border;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.45);
+    padding: 0;
+    transition: background 0.15s ease-in-out;
+}
+
+/* Barra de acento lateral, por prioridade */
+.notification-row .notification-background .notification .notification-default-action {
+    border-left: 3px solid @accent-mid;
+    border-radius: 12px;
+}
+
+.notification-row .notification-background .notification.low .notification-default-action {
+    border-left-color: @border;
+}
+
+.notification-row .notification-background .notification.critical .notification-default-action {
+    border-left-color: @accent;
+}
+
+/* ---- Conteúdo ---- */
+
+.notification-row .notification-background .notification .notification-default-action:hover {
+    background: @bg-hover;
+    box-shadow: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action:not(:only-child) {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content {
+    background: transparent;
+    border-radius: 12px;
+    padding: 0;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .image {
+    -gtk-icon-filter: none;
+    -gtk-icon-size: 64px;
+    border-radius: 8px;
+    margin: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .app-icon {
+    -gtk-icon-filter: none;
+    -gtk-icon-size: 21px;
+    -gtk-icon-shadow: 0 1px 4px black;
+    margin: 6px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box label {
+    filter: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .summary {
+    font-size: 16px;
+    font-weight: bold;
+    background: transparent;
+    color: @fg;
+    text-shadow: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .time {
+    font-size: 16px;
+    font-weight: bold;
+    background: transparent;
+    color: @fg;
+    text-shadow: none;
+    margin-right: 30px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .text-box .body {
+    font-size: 14px;
+    font-weight: normal;
+    background: transparent;
+    color: @fg;
+    text-shadow: none;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content progressbar {
+    margin-top: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content progressbar trough {
+    background: @bg-active;
+    border-radius: 6px;
+    min-height: 6px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content progressbar highlight {
+    background: @accent;
+    border-radius: 6px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .body-image {
+    margin-top: 4px;
+    background-color: white;
+    -gtk-icon-filter: none;
+}
+
+/* Botão de fechar */
+.close-button {
+    background: transparent;
+    color: @fg;
+    text-shadow: none;
+    padding: 0;
+    border-radius: 100%;
+    margin-top: 8px;
+    margin-right: 8px;
+    box-shadow: none;
+    border: none;
+    min-width: 24px;
+    min-height: 24px;
+}
+
+.close-button:hover {
+    box-shadow: none;
+    background: @bg-active;
+    transition: background 0.15s ease-in-out;
+    border: none;
+}
+
+/* ---- Resposta inline ---- */
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply {
+    margin-top: 4px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-entry {
+    background: @bg-solid;
+    color: @fg;
+    caret-color: @accent;
+    border: 1px solid @border-soft;
+    border-radius: 12px;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-entry:focus {
+    border-color: @accent-mid;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button {
+    margin-left: 4px;
+    background: @bg-solid;
+    border: 1px solid @border;
+    border-radius: 12px;
+    color: @fg;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button:hover {
+    background: @bg-hover;
+}
+
+.notification-row .notification-background .notification .notification-default-action .notification-content .inline-reply .inline-reply-button:disabled {
+    background: initial;
+    color: @muted;
+    border: 1px solid transparent;
+}
+
+/* ---- Ações alternativas ---- */
+
+.notification-row .notification-background .notification .notification-default-action .notification-alt-actions {
+    background: none;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    padding: 4px;
+}
+
+.notification-row .notification-background .notification .notification-action {
+    margin: 4px;
+    padding: 0;
+}
+
+.notification-row .notification-background .notification .notification-action > button,
+.notification-group .notification-group-buttons > button {
+    background: @bg-active;
+    color: @fg;
+    border: 1px solid @border-soft;
+    border-radius: 12px;
+    padding: 4px 10px;
+    transition: background 0.15s ease-in-out;
+}
+
+.notification-row .notification-background .notification .notification-action > button:hover,
+.notification-group .notification-group-buttons > button:hover {
+    background: @accent-soft;
+    border-color: @accent-mid;
+}
+
+/* ---- Grupos ---- */
+
+.notification-group {
+    transition: opacity 200ms ease-in-out;
+}
+
+.notification-group:focus {
+    background: @accent-soft;
+}
+
+.notification-group .notification-group-close-button .close-button {
+    margin: 12px 20px;
+}
+
+.notification-group .notification-group-buttons,
+.notification-group .notification-group-headers {
+    margin: 0 16px;
+    color: @fg;
+}
+
+.notification-group .notification-group-headers .notification-group-icon {
+    color: @fg;
+    -gtk-icon-size: 32px;
+}
+
+.notification-group .notification-group-headers .notification-group-header {
+    color: @fg;
+}
+
+/* Nota: o CSS padrão do SwayNC usa `.collapsed.not-expanded`, mas o parser
+   do GTK4 rejeita essa classe ("Unknown name of pseudo-class") e descarta a
+   regra. Aqui usamos só `.collapsed`, que produz o mesmo efeito visual. */
+.notification-group.collapsed {
+    opacity: 0.4;
+}
+
+.notification-group.collapsed .notification-row .notification {
+    background-color: @bg-solid;
+}
+
+.notification-group.collapsed .notification-row:not(:last-child) .notification-action,
+.notification-group.collapsed .notification-row:not(:last-child) .notification-default-action {
+    opacity: 0;
+}
+
+.notification-group.collapsed:hover .notification-row:not(:only-child) .notification {
+    background-color: @bg-hover;
+}
+
+/* ---- Centro de controle ---- */
+
+.control-center {
+    background: @bg-cc;
+    color: @fg;
+    border: 1px solid @border;
+    border-radius: 12px;
+}
+
+.control-center .control-center-list-placeholder {
+    opacity: 0.5;
+}
+
+.control-center .control-center-list {
+    background: transparent;
+}
+
+.control-center .control-center-list .notification {
+    box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.45);
+}
+
+.control-center .control-center-list .notification .notification-default-action,
+.control-center .control-center-list .notification .notification-action {
+    transition: background 0.15s ease-in-out;
+}
+
+.control-center .control-center-list .notification .notification-default-action:hover,
+.control-center .control-center-list .notification .notification-action:hover {
+    background-color: @bg-hover;
+}
+
+.blank-window,
+.floating-notifications {
+    background: transparent;
+}
+
+.floating-notifications .notification {
+    box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- Widgets ---- */
+
+.widget {
+    margin: 8px;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+/* Título */
+.widget-title > label {
+    margin-right: 8px;
+    font-size: 1.5rem;
+    color: @fg;
+}
+
+.widget-title > button {
+    margin-left: 8px;
+    background: @bg-active;
+    color: @fg-dim;
+    border: 1px solid @border-soft;
+    border-radius: 12px;
+    padding: 4px 10px;
+    transition: background 0.15s ease-in-out;
+}
+
+.widget-title > button:hover {
+    background: @accent-soft;
+    color: @fg;
+    border-color: @accent-mid;
+}
+
+/* Não perturbe */
+.widget-dnd label {
+    color: @fg;
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+.widget-dnd switch {
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+.widget-dnd switch slider {
+    border-radius: 12px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.widget-dnd switch:checked slider {
+    background: @accent;
+}
+
+/* MPRIS */
+.widget-mpris {
+    padding: 0;
+}
+
+.widget-mpris .widget-mpris-player {
+    margin: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
+}
+
+.widget-mpris .widget-mpris-player .mpris-background {
+    filter: blur(10px);
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay {
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-radius: 12px;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay button:hover,
+.widget-mpris .widget-mpris-player .mpris-overlay > box > button:hover,
+.widget-mpris > box > button:hover {
+    background: @bg-active;
+    border-radius: 12px;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-album-art {
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75);
+    -gtk-icon-size: 96px;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: @fg;
+}
+
+.widget-mpris .widget-mpris-player .mpris-overlay .widget-mpris-subtitle {
+    font-size: 1.1rem;
+    color: @fg-dim;
+}
+
+/* Botões-grid (Wi-Fi / volume) */
+.widget-buttons-grid flowboxchild > button {
+    background: @bg-active;
+    color: @fg;
+    border: 1px solid @border;
+    border-radius: 12px;
+    padding: 10px;
+    transition: background 0.15s ease-in-out;
+    /* Se control-center-width mudar, recalcule: (width - 44) / 4 - 12 - (5..10).
+       Atualmente 450 -> 84. */
+    min-width: 84px;
+}
+
+.widget-buttons-grid flowboxchild > button:hover {
+    background: @bg-hover;
+    border-color: @accent-mid;
+}
+
+.widget-buttons-grid flowboxchild > button.toggle:checked {
+    background: @accent-soft;
+    border-color: @accent-mid;
+    color: @accent;
+}
+
+/* Menubar */
+.widget-menubar > .menu-button-bar > .start {
+    margin-left: 8px;
+}
+
+.widget-menubar > .menu-button-bar > .end {
+    margin-right: 8px;
+}
+
+.widget-menubar > .menu-button-bar > .widget-menubar-container button,
+.widget-menubar > revealer * button {
+    background: @bg-active;
+    color: @fg;
+    border: 1px solid @border-soft;
+    border-radius: 12px;
+    padding: 4px 10px;
+    transition: background 0.15s ease-in-out;
+}
+
+.widget-menubar > .menu-button-bar > .widget-menubar-container button:hover,
+.widget-menubar > revealer * button:hover {
+    background: @accent-soft;
+    border-color: @accent-mid;
+}
+
+.widget-menubar > revealer * {
+    margin-top: 8px;
+}
+
+.widget-menubar > revealer * button {
+    margin: 8px;
+    margin-top: 0;
+}
+
+.widget-menubar > revealer * button:last-child {
+    margin-bottom: 0;
+}
+
+/* Volume */
+.widget-volume row image {
+    -gtk-icon-size: 24px;
+}
+
+.per-app-volume {
+    background-color: @bg-active;
+    margin: 8px;
+    margin-bottom: 0;
+    border-radius: 12px;
+}
+
+/* Slider (volume e backlight).
+   O SwayNC não define uma classe "widget-slider" — o CSS padrão usa esse
+   seletor, mas ele não casa com nada. O alvo real é a classe do widget. */
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: @bg-solid;
+    border: 1px solid @border-soft;
+    border-radius: 6px;
+    min-height: 8px;
+}
+
+.widget-volume scale highlight,
+.widget-backlight scale highlight {
+    background: @accent;
+    border-radius: 6px;
+}
+
+.widget-volume scale slider,
+.widget-backlight scale slider {
+    background: @fg;
+    border: 1px solid @bg-solid;
+    border-radius: 100%;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Backlight */
+.widget-label > label {
+    font-size: 1.1rem;
+    color: @fg;
+}
+
+/* Inibidores */
+.widget-inhibitors > label {
+    margin-right: 8px;
+    font-size: 1.5rem;
+    color: @fg;
+}
+
+.widget-inhibitors > button {
+    margin-left: 8px;
+    background: @bg-active;
+    color: @fg;
+    border: 1px solid @border-soft;
+    border-radius: 12px;
+}

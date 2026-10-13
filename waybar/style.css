@@ -38,6 +38,11 @@ window#waybar {
     transition: all 0.2s ease;
 }
 #window,
+#custom-recordertime,
+#custom-recorder,
+#custom-notification,
+#backlight,
+#custom-cavaunderbar,
 #custom-window {
     background: @background;
     color: @foreground;
@@ -131,16 +136,6 @@ window#waybar {
 #wireplumber.muted {
     color: @warning;
     border-color: @warning;
-}
-
-/* ---- Idle inhibitor states ---- */
-#idle_inhibitor.activated {
-    color: @success;
-    border-color: @success;
-}
-#idle_inhibitor.deactivated {
-    color: @danger;
-    border-color: @danger;
 }
 
 /* ---- Animations ---- */

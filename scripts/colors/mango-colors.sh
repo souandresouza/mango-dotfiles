@@ -75,17 +75,17 @@ mkdir -p "$(dirname "$MANGO_FILE")"
 
 # Criar configuração com alpha ff
 cat > "$MANGO_FILE" << EOF
-shadowscolor= 0x${color0}ff
-rootcolor=0x${color0}ff
-bordercolor=0x${color6}ff
-dropcolor=0x${color6}55
-splitcolor=0x${color14}ff
-focuscolor=0x${color5}ff
-maximizescreencolor=0x${color6}ff
-urgentcolor=0x${color7}ff
-scratchpadcolor=0x${color13}ff
-globalcolor=0x${color5}ff
-overlaycolor=0x${color14}ff
+shadows_color= 0x${color0}ff
+root_color=0x${color0}ff
+border_color=0x${color6}ff
+drop_color=0x${color6}55
+split_color=0x${color14}ff
+focus_color=0x${color5}ff
+maximized_screen_color=0x${color6}ff
+urgent_color=0x${color7}ff
+scratchpad_color=0x${color13}ff
+global_color=0x${color5}ff
+overlay_color=0x${color14}ff
 EOF
 
 echo "✅ Configuração gerada em $MANGO_FILE"

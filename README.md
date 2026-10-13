@@ -35,8 +35,10 @@ mango-dotfiles/
 │   ├── env.conf            # Environment variables
 │   └── scripts/            # WM-specific scripts
 ├── waybar/                  # Status bar config & styles
+│   └── module/              # Custom waybar modules (música, notificações, workspaces)
 ├── swaylock/                # Lock screen config
-├── mako/                    # Notification daemon config
+├── swayidle/                # Idle/lock triggers
+├── swaync/                  # Notification daemon config + pywal theme
 ├── fuzzel/                  # App launcher config
 ├── kitty/                   # Terminal config
 ├── cava/                    # Audio visualizer + shaders
@@ -47,8 +49,9 @@ mango-dotfiles/
 ├── zathura/                 # PDF viewer config
 ├── xsettingsd/              # X11 settings daemon
 ├── nwg-look/                # GTK theme utility
-├── scripts/                 # Custom shell scripts
+├── scripts/                 # Custom shell scripts (instalados em ~/.local/bin)
 │   ├── colors/              # Pywal color integration
+│   ├── sequencia.sh         # Aplica todas as cores ao trocar o wallpaper
 │   ├── dashboard.sh         # System dashboard
 │   ├── clipboard.sh         # Clipboard manager
 │   └── ...                  # Various utilities
@@ -101,7 +104,7 @@ chmod +x install.sh
 1. **Pre-flight checks** — verifies Arch Linux, sudo, git, and internet
 2. **Installs packages** from official repos (`lista_pacman.txt`)
 3. **Installs AUR helper** (yay) and AUR packages (`lista_aur.txt`)
-4. **Creates necessary directories** (`~/.config`, `~/bin`, etc.)
+4. **Creates necessary directories** (`~/.config`, `~/.local/bin`, etc.)
 5. **Links dotfiles** using GNU Stow (with manual fallback)
 6. **Copies misc files** (mimeapps.list, user-dirs)
 7. **Sets executable permissions** on scripts
@@ -198,7 +201,7 @@ Colors are managed via [Pywal](https://github.com/dylanaraps/pywal) — set a wa
 
 ```bash
 # Colors are extracted from your wallpaper
-~/.config/scripts/colors/mango-colors.sh
+~/.local/bin/sequencia.sh
 ```
 
 Each app has its own color script in `scripts/colors/`.
@@ -231,11 +234,14 @@ yay -S --needed - < lista_aur.txt
 
 # 2. Link configs with stow
 mkdir -p ~/.config
-stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock mako fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura xsettingsd nwg-look
+stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock swayidle swaync fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura xsettingsd nwg-look
 
-# 3. Copy wallpapers & scripts
+# 3. Copy wallpapers & scripts (scripts vão para ~/.local/bin)
 cp -r wallpapers ~/Pictures/
-cp -r scripts ~/.config/
+mkdir -p ~/.local/bin
+cp scripts/*.sh ~/.local/bin/
+cp scripts/colors/*.sh ~/.local/bin/
+chmod +x ~/.local/bin/*.sh
 
 # 4. Set user directories
 cp user-dirs.dirs user-dirs.locale ~/.config/
@@ -250,7 +256,7 @@ After running `install.sh`, complete these steps:
 1. **Log out and log back in** for all changes to take effect
 2. **Set a wallpaper** to trigger pywal colors:
    ```bash
-   ~/.config/scripts/random-wallpaper.sh
+   ~/.local/bin/random-wallpaper.sh
    ```
 3. **Start MangoWM** from your display manager or run:
    ```bash
@@ -277,11 +283,12 @@ sudo systemctl enable --now NetworkManager
 | Problem | Solution |
 |---------|----------|
 | Waybar not starting | Ensure `waybar-git` is installed from AUR |
-| Colors not applying | Run `~/.config/scripts/colors/mango-colors.sh` |
+| Colors not applying | Run `~/.local/bin/sequencia.sh` (reaplica todas as cores do pywal) |
 | Fonts missing | Install a nerd-font package: `sudo pacman -S ttf-nerd-fonts-symbols` |
 | Stow conflicts | Run `stow --adopt --force -d ~/mango-dotfiles -t ~/.config <package>` |
 | MangoWM not found | Ensure `mangowm-git` is installed from AUR |
-| Notifications not showing | Check if `mako` is running: `pgrep mako` |
+| Notifications not showing | Check if `swaync` is running: `pgrep swaync` |
+| Screenshot of a window fails | Needs a focused client; `get focusing-client` returns nothing if none |
 
 ---
 
