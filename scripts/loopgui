@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# loopgui - interface grafica (fuzzel/rofi) para o loop_detect.py / loopbatch
+# loopgui - interface grafica (fuzzel) para o loop_detect.py / loopbatch
 #
 # Trabalha SO com videos que ja estao no notebook. Nao baixa nada.
 # A fonte padrao e ~/Downloads; se estiver vazia, cai para ~/Videos.
@@ -18,7 +18,6 @@
 set -uo pipefail
 
 HIST="$HOME/.local/state/loopgui/history"
-PICKER=""
 HIST_N=12
 OUTDIR="${LOOPGUI_OUTDIR:-$HOME/Vídeos/loopdetect}"
 
@@ -40,34 +39,29 @@ done
 EXCLUDE=(-not -path '*/.git/*' -not -path '*/.pub-cache/*'
          -not -path '*/node_modules/*' -not -path '*/.cache/*')
 
-# ----------------------------------------------------------------- pickers
+# ----------------------------------------------------------------- picker
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
-detect_picker() {
-    if   have fuzzel; then PICKER=fuzzel
-    elif have rofi;   then PICKER=rofi
-    else echo "ERRO: precisa de fuzzel ou rofi instalado." >&2; exit 127
-    fi
+# fuzzel e dependencia declarada do repo (lista_pacman.txt + install.sh).
+# Antes havia fallback para rofi, mas ele nunca existia numa instalacao limpa:
+# o rofi nao e declarado em lugar nenhum, e o config dele importava .rasi
+# gerados por um script que ja foi removido - o menu abriria com o tema
+# congelado, sem seguir o pywal.
+require_picker() {
+    have fuzzel || {
+        echo "ERRO: fuzzel nao instalado (dependencia do repo)." >&2
+        exit 127
+    }
 }
 
 menu() {   # menu <prompt> <placeholder>   (entradas via stdin)
-    local prompt="$1" placeholder="$2"
-    case "$PICKER" in
-        fuzzel)
-            fuzzel --dmenu --prompt="$prompt" --placeholder="$placeholder" \
-                   --fuzzy-min-length=1 --lines=12
-            ;;
-        rofi)   rofi -dmenu -p "$prompt" -i -no-custom ;;
-    esac
+    fuzzel --dmenu --prompt="$1" --placeholder="$2" \
+           --fuzzy-min-length=1 --lines=12
 }
 
 ask() {    # entrada livre
-    local prompt="$1" placeholder="$2"
-    case "$PICKER" in
-        fuzzel) fuzzel --dmenu --prompt-only="$prompt" --placeholder="$placeholder" ;;
-        rofi)   rofi -dmenu -p "$prompt" -i -no-custom ;;
-    esac
+    fuzzel --dmenu --prompt-only="$1" --placeholder="$2"
 }
 
 notify() { have notify-send && notify-send -a "loopdetect" "$@" 2>/dev/null || true; }
@@ -123,7 +117,7 @@ add_hist() {
 
 # -------------------------------------------------------------------- main
 
-detect_picker
+require_picker   # --list sai antes daqui e nao precisa de picker
 DETECT="$HOME/.local/bin/loopdetect"
 BATCH="$HOME/.local/bin/loopbatch"
 [[ -x "$DETECT" ]] || die "loopdetect não encontrado em $DETECT"
