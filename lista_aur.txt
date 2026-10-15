@@ -2,8 +2,10 @@ lavat-git
 localsend
 mangowm-git
 mpvpaper
+proton-ge-bin
 python-pyfiglet
 python-pywal
+snap-pac-git
 swaylock-effects
 tty-clock
 wayfreeze

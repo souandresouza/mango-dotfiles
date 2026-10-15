@@ -1,0 +1,75 @@
+# matugen 4.2.0 — substitui os 9 scripts pywal por templates declarativos.
+#
+# Mapeamento ANSI usado nos templates (base16 -> color0..15, convencao
+# adoptada por kitty/tmux):
+#   color0=base00  color1=base08  color2=base0a  color3=base09
+#   color4=base0c  color5=base0d  color6=base0e  color7=base05
+#   color8=base03  color9=base08  color10=base0a color11=base09
+#   color12=base0c color13=base0d color14=base0e color15=base07
+#   background=base00  foreground=base07  cursor=base0e
+
+[config]
+version_check = false
+
+# ---------------------------------------------------------------- waybar
+[templates.waybar]
+input_path  = '~/.config/matugen/templates/waybar.css.tpl'
+output_path = '~/.config/waybar/colors-waybar.css'
+post_hook   = 'pkill -SIGUSR2 -x waybar 2>/dev/null || true'
+
+# ---------------------------------------------------------------- kitty
+[templates.kitty]
+input_path  = '~/.config/matugen/templates/kitty.conf.tpl'
+output_path = '~/.config/kitty/colors-kitty.conf'
+post_hook   = '~/.local/bin/kitty-reload-colors'
+
+# ---------------------------------------------------------------- fuzzel
+[templates.fuzzel]
+input_path  = '~/.config/matugen/templates/fuzzel.ini.tpl'
+output_path = '~/.config/fuzzel/colors-fuzzel.ini'
+post_hook   = 'pkill -SIGUSR1 -x fuzzel 2>/dev/null || true'
+
+# ---------------------------------------------------------------- mango
+[templates.mango]
+input_path  = '~/.config/matugen/templates/mango-theme.conf.tpl'
+output_path = '~/.config/mango/theme.conf'
+post_hook   = 'mangoctl reload 2>/dev/null || true'
+
+# ---------------------------------------------------------------- cava
+[templates.cava]
+input_path  = '~/.config/matugen/templates/cava-colors.tpl'
+output_path = '~/.config/cava/themes/colors'
+
+# ---------------------------------------------------------------- zathura
+[templates.zathura]
+input_path  = '~/.config/matugen/templates/zathurarc.tpl'
+output_path = '~/.config/zathura/zathurarc'
+post_hook   = 'pkill -SIGUSR1 -x zathura 2>/dev/null || true'
+
+# ---------------------------------------------------------------- swaync
+# `colors.primary` substitui o hack do script antigo, que escolhia a cor mais
+# saturada entre color1..color6 por calculo manual. No Material You o primary
+# ja e a cor dominante do wallpaper.
+[templates.swaync]
+input_path  = '~/.config/matugen/templates/swaync.css.tpl'
+output_path = '~/.config/swaync/colors-swaync.css'
+post_hook   = 'swaync-client --reload-css 2>/dev/null || true'
+
+# ---------------------------------------------------------------- swaylock
+# Arquivo inteiro e gerado. As opcoes nao-cor foram copiadas do config atual
+# para nao perder ajustes; mexa aqui, nao no arquivo gerado.
+[templates.swaylock]
+input_path  = '~/.config/matugen/templates/swaylock-config.tpl'
+output_path = '~/.config/swaylock/config'
+
+# ---------------------------------------------------------------- qbittorrent
+# O qBittorrent so le o tema na inicializacao, entao nao ha post_hook.
+# A hierarquia de fundo que o script antigo calculava com shift(lightness)
+# agora usa a rampa neutra do base16 (base00..base07), que ja e monotonica.
+[templates.qbittorrent_json]
+input_path  = '~/.config/matugen/templates/qbittorrent-config.json.tpl'
+output_path = '~/.config/qBittorrent/themes/matugen/config.json'
+
+[templates.qbittorrent_qss]
+input_path  = '~/.config/matugen/templates/qbittorrent-stylesheet.qss.tpl'
+output_path = '~/.config/qBittorrent/themes/matugen/stylesheet.qss'

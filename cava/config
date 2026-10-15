@@ -1,8 +1,53 @@
+# ~/.config/cava/config
+#
+# Recuperado do commit d40057b do mango-dotfiles. O commit f7e371d reduziu
+# este arquivo de 37 para 7 linhas e perdeu [output] inteira — com ela
+# sumiram `orientation = horizontal` (as barras passaram a ancorar embaixo,
+# que e o default "bottom") e `theme = "colors"` (que e o que faz o cava
+# ler ~/.config/cava/themes/colors, gerado pelo matugen).
+#
+# Mantido do arquivo reducedo:
+#   bar_width = 2  (o original tinha 0, que e "auto")
+#   bar_spacing, max_height
+# Removido:
+#   overshoot = 100  -> DEPRECATED as of cava 0.6.0, era ignorado
+#   [color] foreground = white -> substituido por theme = "colors"
+
 [general]
+
+live-config = 0
+framerate = 60
+
+autosens = 1
+; sensitivity = 100
+bars = 0
 bar_width = 2
 bar_spacing = 1
-overshoot = 100
+center_align = 1
 max_height = 100
 
-[color]
-foreground = white
+
+[input]
+
+[output]
+
+method = noncurses
+orientation = horizontal
+
+reverse = 1
+
+horizontal_stereo = 0
+left_bottom = 0
+
+synchronized_sync = 0
+
+show_idle_bar_heads = 0
+waveform = 0
+
+theme = "colors"
+
+[smoothing]
+
+monstercat = 0
+waves = 0
+noise_reduction = 80

@@ -171,6 +171,7 @@ copy_configs() {
         fuzzel
         kitty
         cava
+        matugen
         cmus
         fastfetch
         gtk-3.0
@@ -209,8 +210,11 @@ copy_scripts() {
         return
     fi
 
-    # Scripts de cor vão para ~/.local/bin/ junto com o resto (o
-    # sequencia.sh chama tudo por caminho absoluto a partir dali).
+    # O matugen substituiu os scripts de cor: cada bloco [templates.*] do
+    # matugen/config.toml escreve um arquivo de saida e recarrega o app pelo
+    # post_hook. Os scripts em scripts/colors/ ficaram sem uso e nao sao mais
+    # chamados pelo sequencia.sh — o subdirso continua na lista para não
+    # quebrar quem ainda os tenha no ~/.local/bin.
     local subdirs=(colors)
 
     # Não só *.sh: loopdetect/loopbatch/loopgui são executáveis sem
