@@ -1,6 +1,4 @@
 7zip
-acpi
-acpid
 adw-gtk-theme
 alsa-utils
 amd-ucode
