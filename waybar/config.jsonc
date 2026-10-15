@@ -1,148 +1,88 @@
+// Barra unica para todas as saidas (waybar cria uma barra por monitor).
+// Antes havia config.jsonc + config-laptop.jsonc so para esconder o
+// 'custom/recordertime' no monitor externo. Com a barra minima as duas
+// configs ficaram iguais, entao a segunda instancia foi removida
+// (custava ~10 MB de overhead por processo).
+// Recarregar: killall -SIGUSR2 waybar
 {
-  "include": [
-    "$HOME/.config/waybar/module/notification_module",
-    "$HOME/.config/waybar/module/workspace_module"
-  ],
     "name": "topbar",
     "layer": "top",
     "position": "top",
-    "height": 24,
+    "height": 26,
     "mode": "dock",
     "exclusive": true,
     "spacing": 0,
     "passthrough": false,
     "gtk-layer-shell": true,
     "reload_style_on_change": true,
-    "modules-left": [
-      "group/hworkspaces",
-      "custom/cmus",
-      "custom/cavaunderbar",
-    ],
-    "modules-center": [
-      "clock"
-    ],
-    "modules-right": [
-      "backlight",
-      "network",
-      "wireplumber",
-      "custom/recorder",
-      "custom/recordertime",
-      "battery",
-      "custom/notification"
-    ],
     "ext/workspaces": {
-      "format": "{name}",
-      "hide-empty": true,
-      "on-click": "activate",
-      "on-click-right": "toggle",
-      "overview-label": "OVERVIEW",
-      },
-    "clock": {
-      "format": "{:L%A, %d/%m/%Y - %T}",
-      "format-alt": "{:%A, %d/%m/%Y - %H:%M:%S}",
-      "timezone": "America/Sao_Paulo",
-      "locale": "pt_BR.UTF-8",
-      "interval": 1,
-      "tooltip-format": "<tt><small>{calendar}</small></tt>",
-      "calendar": {
-        "mode": "month",
-        "mode-mon-col": 3,
-        "on-scroll": 1,
-        "format": {
-          "months": "<span color='#ffead3'><b>{}</b></span>",
-          "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
-        }
-      },
-      "actions": {
-        "on-click-right": "mode",
-        "on-scroll-up": "shift_up",
-        "on-scroll-down": "shift_down"
-      }
+        "format": "{name}",
+        "hide-empty": true,
+        "on-click": "activate",
+        "on-click-right": "toggle",
+        "overview-label": "OVERVIEW"
     },
-    "network": {
-      "format": "{ifname} [󰾆 {bandwidthTotalBytes}]",
-      "format-wifi": "{icon} {essid} ({signalStrength}%)",
-      "format-ethernet": "󱘖  {ifname} [󰾆 {bandwidthTotalBytes}]",
-      "format-disconnected": "󰌙 Disconnected ⚠",
-      "format-alt": "  {ipaddr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
-      "tooltip-format": "{ifname} via {gwaddr} ",
-      "tooltip-format-wifi": "{frequency} MHz ({signalStrength}%)",
-      "tooltip-format-ethernet": "{ipaddr}/{cidr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
-      "tooltip-format-disconnected": "Disconnected ⚠",
-      "max-length": 50,
-      "format-icons": [
-        "󰤯 ",
-        "󰤟 ",
-        "󰤢 ",
-        "󰤢 ",
-        "󰤨 "
-      ]
+    "clock": {
+        "format": "{:L%A, %d/%m/%Y - %T}",
+        "format-alt": "{:%A, %d/%m/%Y - %H:%M:%S}",
+        "timezone": "America/Sao_Paulo",
+        "locale": "pt_BR.UTF-8",
+        "interval": 1,
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
     },
     "wireplumber": {
-      "format": "{icon} {volume}%",
-      "format-muted": " Muted",
-      "format-icons": [
-        " ",
-        " ",
-        " "
-      ],
-      "scroll-step": 0.2,
-      "max-volume": 100,
-      "on-click": "pavucontrol"
-    },
-    "bluetooth": {
-      "format": " {status} {num_connections}",
-      "format-off": "󰂲 OFF",
-      "format-disabled": "󰂲 {status}",
-      "format-connected": "󰂱 {num_connections}",
-      "tooltip-format": "Devices connected: {num_connections}",
-      "on-click": "blueman-manager"
+        "format": "{icon} {volume}%",
+        "format-muted": " Muted",
+        "format-icons": [
+            " ",
+            " ",
+            " "
+        ],
+        "scroll-step": 0.2,
+        "max-volume": 100,
+        "on-click": "pavucontrol"
     },
     "battery": {
-      "format": "{capacity}% {icon}",
-      "format-charging": "{capacity}% 󰂄",
-      "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
-      "interval": 30,
-      "states": {
-        "warning": 30,
-        "critical": 15
-      }
+        "format": "{capacity}% {icon}",
+        "format-charging": "{capacity}% 󰂄",
+        "format-icons": [
+            "󰁺",
+            "󰁼",
+            "󰁾",
+            "󰂀",
+            "󰁹"
+        ],
+        "interval": 30,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        }
     },
-    "custom/cmus": {
-      "exec": "~/.config/scripts/music-tui-status.sh",
-      "interval": 5,
-      "format": "{}",
-      "on-click": "kitty --app-id cmus -e cmus",
-      "max-length": 20,
-      "ellipsis": "start"
-    },
-    "custom/recorder": {
-      "format": "",
-      "on-click": "$HOME/.local/bin/record.sh",
-      "tooltip": true,
-      "tooltip-format": "Start/Stop recording"
-    },
-    "custom/recordertime": {
-      "exec": "if [ -f /tmp/recording_time ]; then cat /tmp/recording_time; fi",
-      "interval": 1,
-      "format": "{text}",
-      "return-type": "plain",
-      "if-file-exists": "/tmp/recording_pid",
-      "hide-empty-text": true,
-      "on-click": "$HOME/.local/bin/record.sh",
-      "tooltip": true,
-      "tooltip-format": "Stop recording"
-    },
-    "backlight": {
-      "format": "{icon} {percent}%",
-      "format-icons": ["", "", "", "", "", "", "", "", ""],
-      "on-scroll-up": "brightnessctl set 1%+",
-      "on-scroll-down": "brightnessctl set 1%-",
-      "on-click": "$HOME/.local/bin/nightlight_toggle.sh",
-      "tooltip-format": "Brightness: {percent}%"
-    },
-    "custom/cavaunderbar": {
-      "format": "󰝚",
-      "tooltip-format": "Music Visualizer"
-    },
-  }
+    "include": [
+        "$HOME/.config/waybar/module/workspace_module"
+    ],
+    "modules-left": [
+        "group/hworkspaces"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "wireplumber",
+        "battery"
+    ]
+}

@@ -1,6 +1,9 @@
 # swayidle config — adaptado de srgvg/dotfiles (.config/swayidle/config)
 
-idlehint 300
+# Escurerece a tela antes de travar. Precisa ser bem menor que o
+# 'timeout' de lock abaixo -- com os dois em 300 a tela escurecia e
+# travava no mesmo instante, e o idlehint nao servia para nada.
+idlehint 90
 
 # Trava a tela após 5 min idle.
 # O gate idle_inhibit.sh sai 1 (= NAO pode travar) quando:

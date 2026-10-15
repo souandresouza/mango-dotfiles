@@ -21,11 +21,8 @@ window#waybar {
 #workspaces button,
 #clock,
 #layout,
-#network,
 #wireplumber,
-#bluetooth,
-#battery,
-#custom-cmus {
+#battery {
     background: @background;
     color: @foreground;
     margin: 0px 2px;
@@ -37,11 +34,6 @@ window#waybar {
     transition: all 0.2s ease;
 }
 #window,
-#custom-recordertime,
-#custom-recorder,
-#custom-notification,
-#backlight,
-#custom-cavaunderbar,
 #custom-window {
     background: @background;
     color: @foreground;
@@ -96,11 +88,8 @@ window#waybar {
 
 /* ---- Hover effect ---- */
 #clock:hover,
-#network:hover,
 #wireplumber:hover,
-#bluetooth:hover,
-#battery:hover,
-#custom-cmus:hover {
+#battery:hover {
     border-color: @accent;
     color: @accent;
 }
@@ -120,17 +109,7 @@ window#waybar {
     border-color: @success;
 }
 
-#network.disconnected {
-    background: @foreground;
-    color: @background;
-    border: 2px dashed @background;
-}
 
-#bluetooth.disconnected {
-    background: @foreground;
-    color: @background;
-    border: 2px dashed @background;
-}
 
 #wireplumber.muted {
     color: @warning;
