@@ -21,6 +21,7 @@ cliphist
 cmatrix
 cmus
 cronie
+cryptsetup
 direnv
 earlyoom
 efibootmgr
