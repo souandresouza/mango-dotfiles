@@ -50,7 +50,18 @@ echo "sequencia: paleta a partir de $WALLPAPER"
 # -c remove o cache de esquemas e sai; so depois dele o -i reanalisa a imagem.
 wal -c
 # -n: nao deixa o wal trocar o wallpaper (quem aplica o fundo e o swaybg).
-wal -n -i "$WALLPAPER" || exit 1
+# -e: pula reload.env() e reload.gtk(). Nesse setup nao ha nada para recarregar
+# nessa lista: xrdb e X11, i3/sway/polybar nao sao usados (o compositor e o
+# MangoWM) e o reload.gtk() do pywal ainda depende de python2, o que so gerava
+# o aviso "GTK2 reload support requires Python 2". O kitty, que era o unico
+# relevante, e recarregado pelos nossos proprios scripts.
+#
+# Filtro no stderr: o backend padrao do pywal (backends/wal.py) chama
+# `magick convert`, e o ImageMagick 7 responde "The convert command is
+# deprecated in IMv7" a cada execucao. O aviso e upstream e sempre o mesmo, e
+# nao ha como remove-lo sem editar o pacote (que some em qualquer update do
+# python-pywal). Qualquer outro erro do wal continua aparecendo.
+wal -n -e -i "$WALLPAPER" 2> >(grep -v "convert command is deprecated in IMv7") || exit 1
 
 for app in cava cadroc kitty fuzzel mango qbittorrent waybar zathura swaylock swaync; do
     "$HOME/.local/bin/${app}-colors.sh"
