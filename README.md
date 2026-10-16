@@ -108,7 +108,7 @@ chmod +x install.sh
 5. **Links dotfiles** using GNU Stow (with manual fallback)
 6. **Copies misc files** (mimeapps.list, user-dirs)
 7. **Sets executable permissions** on scripts
-8. **Configures user directories** (XDG)
+8. **Configures user directories** (XDG) via `xdg-user-dirs-update --force`
 
 ---
 

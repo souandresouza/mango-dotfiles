@@ -338,7 +338,9 @@ setup_user_dirs() {
     header "Setting Up User Directories"
 
     if check_command xdg-user-dirs-update; then
-        run "xdg-user-dirs-update"
+        # --force garante que os diretórios padrão sejam (re)criados mesmo
+        # que o arquivo user-dirs.dirs já exista (comum em instalações recentes).
+        run "xdg-user-dirs-update --force"
         success "User directories created."
     else
         warn "xdg-user-dirs not found — skipping."
