@@ -30,9 +30,12 @@ THEME_BTOP_DIR="${HOME}/.config/btop/themes"
 # Antes: THEME_LABWC_OVERRIDE=~/.themes/cadroclab/labwc/themerc
 
 # Default theme values.
+# A fonte e a mesma que o resto dos configs usa (waybar, swaync, fuzzel) e o
+# tamanho 12 era o valor do kitty.conf antes de os dois campos passarem a vir
+# do theme/kitty-style.conf, renderizado pelo cadroc-colors.sh.
 THEME_DEFAULT_ACCENT="#ffffff"
-THEME_DEFAULT_FONT="monospace"
-THEME_DEFAULT_SIZE="14"
+THEME_DEFAULT_FONT="JetBrainsMono Nerd Font"
+THEME_DEFAULT_SIZE="12"
 
 mkdir -p "$THEME_RENDER_DIR" "$STATE_DIR"
 

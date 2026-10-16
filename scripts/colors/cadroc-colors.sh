@@ -1,6 +1,7 @@
 #!/bin/bash
-# Gera os arquivos de tema do cadrocspace consumidos pelo GTK, a partir da
-# paleta pywal.
+# Gera os arquivos de tema do cadrocspace a partir da paleta pywal e do estado
+# do tema: o colors.css consumido pelo GTK e o kitty-style.conf consumido pelo
+# terminal.
 #
 # ~/.config/gtk-3.0/gtk.css importa
 # ~/.local/state/cadrocspace/theme/colors.css, que precisa definir @accent_color
@@ -85,4 +86,22 @@ mkdir -p "$THEME_RENDER_DIR"
     done
 } > "$THEME_RENDER_DIR/colors.css"
 
+# theme/kitty-style.conf: o include do ~/.config/kitty/kitty.conf. O arquivo
+# tambem nao existia, e e daqui que saem font_family/font_size do terminal. Vem
+# do estado (nao do pywal): fonte e tamanho nao sao cor.
+{
+    echo "# Gerado por ~/.local/bin/cadroc-colors.sh a partir do estado do tema."
+    echo "# NÃO EDITE — ajuste FONT_FAMILY/FONT_SIZE em state/state.env."
+    echo
+    echo "font_family $FONT_FAMILY"
+    echo "font_size $FONT_SIZE"
+} > "$THEME_RENDER_DIR/kitty-style.conf"
+
 echo "✅ Cores do GTK atualizadas (accent: $accent)"
+echo "✅ Fonte do kitty aplicada: $FONT_FAMILY $FONT_SIZE"
+
+# O kitty so aplica fonte nova em processo vivo; recarrega pelas instancias
+# abertas em todos os sockets.
+if [[ -x "$HOME/.local/bin/kitty-reload-colors" ]]; then
+    "$HOME/.local/bin/kitty-reload-colors" && echo "✅ Kitty recarregado"
+fi
