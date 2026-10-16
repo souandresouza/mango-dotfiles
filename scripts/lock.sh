@@ -40,8 +40,16 @@ date +%s >"$DEBOUNCE_FILE"
 
 # pausa notificações durante o bloqueio (best-effort).
 # Equivalente no SwayNC: --dnd-on / --dnd-off (mako não é mais usado).
-: >"$AUTO_DND_FILE"
-swaync-client --dnd-on >/dev/null 2>&1 || :
+#
+# Se o DND já estava ligado, foi o usuário (SUPER,u ou o switch do painel): não
+# marca como automático, para o destrave não desligar o que é dele. Só liga
+# (e marca) quando estava desligado antes.
+if [ "$(swaync-client --get-dnd 2>/dev/null)" = "true" ]; then
+    rm -f "$AUTO_DND_FILE"
+else
+    : >"$AUTO_DND_FILE"
+    swaync-client --dnd-on >/dev/null 2>&1 || :
+fi
 
 # Trava de fato. `swaylock -f` é --daemonize: o comando volta assim que a tela
 # trava e o swaylock segue rodando detached, então o sucesso se mede pelo
@@ -59,6 +67,20 @@ if ! swaylock -f "$@" && ! pgrep -x swaylock >/dev/null; then
     fi
 fi
 
-# Trava no lugar; lock.sh termina aqui. Quem destrava é o swayidle, que chama
-# unlock.sh e limpa a flag.
+# A tela está travada. Quem desliga o DND automático é o unlock.sh, MAS ele
+# responde ao evento `unlock` do swayidle, que vem do logind sinalizando
+# destravamento de sessão — digitar a senha no swaylock não gera evento nenhum.
+# Num lock manual (Super,l) o unlock.sh simplesmente nunca roda e o DND ficava
+# ligado para sempre depois do destrave. Por isso este watcher: ele espera o
+# swaylock terminar e desfaz o que foi ligado aqui.
+# setsid desliga o watcher do compositor, então ele não segura o lock.sh.
+# Se o DND for manual, não existe flag e o watcher não mexe.
+setsid bash -c '
+    while pgrep -x swaylock >/dev/null 2>&1; do sleep 1; done
+    [ -f "$1" ] || exit 0
+    rm -f "$1"
+    swaync-client --dnd-off >/dev/null 2>&1 || :
+' _ "$AUTO_DND_FILE" >/dev/null 2>&1 &
+
+# Trava no lugar; lock.sh termina aqui.
 exit 0
