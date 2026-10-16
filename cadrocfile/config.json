@@ -1,0 +1,25 @@
+{
+  "theme": "dark",
+  "view_mode": "grid",
+  "icon_size": 48,
+  "show_hidden": true,
+  "dirs_first": true,
+  "sort_key": "name",
+  "sort_descending": false,
+  "single_click_open": false,
+  "shred_passes": 3,
+  "worker_threads": 0,
+  "accent_color": "#E04434",
+  "ntfs_fuse_volumes": [],
+  "confirm_trash": false,
+  "show_thumbnails": true,
+  "thumbnail_max_bytes": 33554432,
+  "favourites": [
+    "/home/andre/Downloads/Telegram Desktop"
+  ],
+  "servers": [],
+  "window_width": 1892,
+  "window_height": 1052,
+  "window_maximized": false,
+  "sidebar_visible": true
+}

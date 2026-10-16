@@ -136,6 +136,53 @@ install_aur_packages() {
     success "AUR packages installed."
 }
 
+install_cadrocfile() {
+    header "Installing cadrocfile from GitHub"
+
+    if check_command cadrocfile; then
+        success "cadrocfile already installed."
+        return
+    fi
+
+    local tmpdir
+    tmpdir="$(mktemp -d)"
+    run "git clone https://github.com/souandresouza/cadrocfile.git '$tmpdir/cadrocfile'"
+
+    if ! $DRY_RUN; then
+        cd "$tmpdir/cadrocfile" || return
+        local built=0
+
+        if [[ -f Cargo.toml ]]; then
+            info "Detected Rust project, building with cargo..."
+            if cargo build --release 2>/dev/null; then
+                sudo cp target/release/cadrocfile /usr/local/bin/
+                built=1
+            fi
+        elif [[ -f Makefile ]]; then
+            info "Detected Makefile, building with make..."
+            if make 2>/dev/null; then
+                sudo cp cadrocfile /usr/local/bin/ 2>/dev/null || sudo cp target/release/cadrocfile /usr/local/bin/ 2>/dev/null
+                built=1
+            fi
+        elif [[ -f meson.build ]]; then
+            info "Detected Meson project..."
+            if meson setup builddir 2>/dev/null && ninja -C builddir 2>/dev/null; then
+                sudo cp builddir/cadrocfile /usr/local/bin/ 2>/dev/null
+                built=1
+            fi
+        fi
+
+        if [[ $built -eq 0 ]]; then
+            warn "Could not automatically build cadrocfile."
+            info "Build manually in $tmpdir/cadrocfile and copy the binary to /usr/local/bin/ (or your PATH)."
+        fi
+
+        cd "$SCRIPT_DIR"
+    fi
+
+    run "rm -rf '$tmpdir'"
+}
+
 # ── Directory Setup ──────────────────────────────────────────────────────────
 
 create_directories() {
@@ -171,6 +218,7 @@ copy_configs() {
         fuzzel
         kitty
         cava
+        cadrocfile
         matugen
         cmus
         fastfetch
@@ -422,6 +470,7 @@ main() {
         install_pacman_packages
         install_yay
         install_aur_packages
+        install_cadrocfile
     fi
 
     create_directories
