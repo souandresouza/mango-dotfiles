@@ -52,6 +52,6 @@ wal -c
 # -n: nao deixa o wal trocar o wallpaper (quem aplica o fundo e o swaybg).
 wal -n -i "$WALLPAPER" || exit 1
 
-for app in cava kitty fuzzel mango qbittorrent waybar zathura swaylock swaync; do
+for app in cava cadroc kitty fuzzel mango qbittorrent waybar zathura swaylock swaync; do
     "$HOME/.local/bin/${app}-colors.sh"
 done
