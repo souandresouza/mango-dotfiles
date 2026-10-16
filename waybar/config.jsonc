@@ -44,7 +44,7 @@
             "on-scroll-down": "shift_down"
         }
     },
-    "wireplumber": {
+    "pulseaudio": {
         "format": "{icon} {volume}%",
         "format-muted": " Muted",
         "format-icons": [
@@ -82,7 +82,7 @@
         "clock"
     ],
     "modules-right": [
-        "wireplumber",
+        "pulseaudio",
         "battery"
     ]
 }

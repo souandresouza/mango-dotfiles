@@ -25,14 +25,14 @@ mango/.bak*
 # mako removido do setup (SwayNC é o daemon de notificações)
 mako/
 
-# Runtime gerado (matugen/cadrocspace recriam no boot)
+# Runtime gerado (scripts/colors + cadrocspace recriam no boot)
 cava/config_waybar
 cava/cache/
 swaync/colors-swaync.css
 waybar/colors-waybar.css
 fuzzel/colors-fuzzel.ini
 cava/themes/colors
-# Tema do qBittorrent: só o .tpl é versionado, o resto sai do matugen
-# (matugen/templates/qbittorrent-*.tpl é a fonte real agora)
+# Tema do qBittorrent: só o .tpl é versionado, o resto sai do pywal
+# (~/.local/bin/qbittorrent-colors.sh é a fonte real agora)
 qbittorrent/config.json
 qbittorrent/stylesheet.qss

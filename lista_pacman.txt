@@ -79,7 +79,6 @@ ly
 man-db
 mangohud
 materia-gtk-theme
-matugen
 mkinitcpio
 mpv
 mpv-mpris

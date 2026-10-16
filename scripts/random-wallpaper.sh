@@ -189,9 +189,8 @@ main() {
     # Cria cópia do wallpaper
     cp "$SELECTED" "$CURRENT_WALLPAPER" 2>/dev/null || true
 
-    # sequencia.sh chama o matugen, que gera os 10 arquivos de tema e
-    # recarrega os apps pelos post_hook. O pywal nao e mais chamado: as
-    # cores sao geradas por templates declarativos, nao por parse de CSS.
+    # sequencia.sh roda o pywal (wal -i) e depois os 9 scripts de cor, que
+    # escrevem os arquivos de tema de cada app e os recarregam.
     "$HOME/.local/bin/sequencia.sh" "$SELECTED"
     echo "✨ Concluído!" >&2
 }

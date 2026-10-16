@@ -1,4 +1,4 @@
-@import 'colors-waybar.css';
+@import '../../.cache/wal/colors-waybar.css';
 
 /* Accent/semantic colors mapped from pywal palette */
 @define-color accent @color14;
@@ -21,7 +21,7 @@ window#waybar {
 #workspaces button,
 #clock,
 #layout,
-#wireplumber,
+#pulseaudio,
 #battery {
     background: @background;
     color: @foreground;
@@ -88,7 +88,7 @@ window#waybar {
 
 /* ---- Hover effect ---- */
 #clock:hover,
-#wireplumber:hover,
+#pulseaudio:hover,
 #battery:hover {
     border-color: @accent;
     color: @accent;
@@ -111,7 +111,7 @@ window#waybar {
 
 
 
-#wireplumber.muted {
+#pulseaudio.muted {
     color: @warning;
     border-color: @warning;
 }

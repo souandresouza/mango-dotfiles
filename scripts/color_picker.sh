@@ -72,18 +72,14 @@ if $APPLY; then
         hex=$(magick "$preview" -format '%[hex:p{0,0}]' info: 2>/dev/null)
         color="${hex:-$color}"
     }
-    # Gera a paleta a partir da cor escolhida. Antes este caminho dependia de
-    # gen_style.sh, que nao e mais distribuido -- o --apply so chamava
-    # apply_style.sh e re-aplicava a paleta anterior, sem efeito nenhum.
-    if command -v matugen >/dev/null 2>&1; then
-        if matugen color "$color" --prefer saturation --mode dark; then
-            notify-send -t 3000 "Color picker" "Tema aplicado: $color"
-        else
-            notify-send -t 5000 "Color picker" "Falha ao aplicar $color" -i dialog-error
-        fi
-    else
-        notify-send -t 5000 "Color picker" "matugen nao instalado" -i dialog-error
+    # pywal nao tem modo "paleta a partir de uma cor solida" (o -c dele limpa o
+    # cache), entao o --apply nao pode regerar o tema. Fica como na era pywal:
+    # reaplica o estilo atual (recarga apps/fonte via apply_style.sh) sem
+    # prometer mudanca de paleta.
+    if [[ -f "$SCRIPT_DIR/gen_style.sh" ]]; then
+        "$SCRIPT_DIR/gen_style.sh" "$color" || true
     fi
+    "$SCRIPT_DIR/apply_style.sh"
     rm -f "$preview"
     exit 0
 fi

@@ -4,7 +4,7 @@
 # este arquivo de 37 para 7 linhas e perdeu [output] inteira — com ela
 # sumiram `orientation = horizontal` (as barras passaram a ancorar embaixo,
 # que e o default "bottom") e `theme = "colors"` (que e o que faz o cava
-# ler ~/.config/cava/themes/colors, gerado pelo matugen).
+# ler ~/.config/cava/themes/colors, gerado por ~/.local/bin/cava-colors.sh).
 #
 # Mantido do arquivo reducedo:
 #   bar_width = 2  (o original tinha 0, que e "auto")
