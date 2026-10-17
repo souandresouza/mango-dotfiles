@@ -15,7 +15,7 @@
   "show_thumbnails": true,
   "thumbnail_max_bytes": 33554432,
   "favourites": [
-    "/home/andre/Downloads/Telegram Desktop"
+    "~/Downloads/Telegram Desktop"
   ],
   "servers": [],
   "window_width": 1892,
