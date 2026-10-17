@@ -14,7 +14,7 @@ set -uo pipefail
 
 MOUNT_POINT="${BACKUP_MOUNT:-/mnt/backup}"
 REPO="${BACKUP_REPO:-$MOUNT_POINT/restic-repo}"
-KEYFILE="${BACKUP_KEYFILE:-$HOME/.config/restic/key}"
+KEYFILE="${BACKUP_KEYFILE:-$HOME/.config/restic/repo-key}"
 LOG="${BACKUP_LOG:-$HOME/.local/state/restic/backup.log}"
 STATE="$HOME/.local/state/restic"
 LOCK="$STATE/backup.lock"
@@ -39,9 +39,11 @@ KEEP_WEEKLY=4
 KEEP_MONTHLY=6
 
 mkdir -p "$STATE"
-[[ -f "$KEYFILE" ]] || { echo "sem chave em $KEYFILE - rode: restic-keygen" >&2; exit 1; }
+[[ -f "$KEYFILE" ]] || { echo "sem chave em $KEYFILE - rode: restic init --repository-file $KEYFILE" >&2; exit 1; }
 
-R() { restic -r "$REPO" --password-file "$KEYFILE" "$@"; }
+# --repository-file usa a chave do arquivo; sem ela o backup fica
+# ilegível, e sem o arquivo o backup automático não roda sem gente digitando senha.
+R() { restic -r "$REPO" --repository-file "$KEYFILE" "$@"; }
 
 log() {
     local msg="$1"
