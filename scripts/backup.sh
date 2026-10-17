@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# backup.sh - backup do /home e do /etc num disco externo via restic.
+#
+#   backup.sh              roda um backup (sem argumentos = manual)
+#   backup.sh --check      só verifica a integridade do repositório
+#   backup.sh --restore <caminho> [destino]
+#   backup.sh --snapshots  lista os pontos de restauração
+#   backup.sh --latest     imprime o snapshot mais recente (para backup.sh --restore latest)
+#
+# O script recusa rodar se o disco externo não estiver montado. Sem essa
+# checagem, um backing off do USB deixaria o restic gravar o backup no
+# próprio disco local, e só se descobre quando o externo volta.
+set -uo pipefail
+
+MOUNT_POINT="${BACKUP_MOUNT:-/mnt/backup}"
+REPO="${BACKUP_REPO:-$MOUNT_POINT/restic-repo}"
+KEYFILE="${BACKUP_KEYFILE:-$HOME/.config/restic/key}"
+LOG="${BACKUP_LOG:-$HOME/.local/state/restic/backup.log}"
+STATE="$HOME/.local/state/restic"
+LOCK="$STATE/backup.lock"
+
+R="$MOUNT_POINT"          # o que entra no backup
+EXCLUDES=(
+    "$R/.cache"
+    "$R/.wine"
+    "$R/.cargo/registry"
+    "$R/.cargo/git"
+    "$R/.local/share/Trash"
+    "$R/.local/state"
+    "$R/.mozilla/**/cache2"
+    "$R/.local/share/flatpak/exports"
+    "$R/**/node_modules"
+    "$R/**/.git/objects/pack/tmp_*"
+)
+# política de retenção
+KEEP_HOURLY=6
+KEEP_DAILY=7
+KEEP_WEEKLY=4
+KEEP_MONTHLY=6
+
+mkdir -p "$STATE"
+[[ -f "$KEYFILE" ]] || { echo "sem chave em $KEYFILE - rode: restic-keygen" >&2; exit 1; }
+
+R() { restic -r "$REPO" --password-file "$KEYFILE" "$@"; }
+
+log() {
+    local msg="$1"
+    printf '%s  %s\n' "$(date '+%F %T')" "$msg" >>"$LOG"
+    printf '%s  %s\n' "$(date '+%F %T')" "$msg"
+}
+
+notify() {
+    command -v notify-send >/dev/null && \
+        notify-send -a "restic" -u "$2" "Backup" "$1" 2>/dev/null
+}
+
+# Trava: dois backups simultâneos no mesmo disco USB não dá certo.
+exec 9>"$LOCK" || exit 1
+flock -n 9 || { log "outro backup já está rodando"; exit 0; }
+
+# --- o disco precisa estar montado ---------------------------------------
+if ! mountpoint -q "$MOUNT_POINT"; then
+    log "ERRO: $MOUNT_POINT não está montado - backup cancelado"
+    notify "$MOUNT_POINT não está montado; nada foi salvo" critical
+    exit 1
+fi
+command -v restic >/dev/null || { log "ERRO: restic não instalado"; exit 1; }
+
+case "${1:-}" in
+--check)
+    log "verificando a integridade do repositório..."
+    R check --read-data-subset=5% && log "repositório íntegro" && exit 0
+    log "ERRO: repositório com problema"; exit 1
+    ;;
+--snapshots)
+    R snapshots; exit 0
+    ;;
+--restore)
+    snap="${2:?informe o snapshot (ou 'latest')}"
+    dest="${3:-$PWD}"
+    R restore "$snap" --target "$dest" --verify
+    log "restaurado $snap -> $dest"
+    exit 0
+    ;;
+--latest)
+    R snapshots --json | python3 -c 'import json,sys; s=json.load(sys.stdin); print(s[-1]["short_id"] if s else "")'
+    exit 0
+    ;;
+esac
+
+# --- o backup em si ------------------------------------------------------
+log "iniciando backup para $REPO"
+if R backup "${EXCLUDES[@]}" /etc \
+      --tag home --tag sistema --exclude-caches \
+      --exclude "*.iso" --exclude "*.tar.zst"; then
+    R forget --prune \
+        --keep-hourly "$KEEP_HOURLY" --keep-daily "$KEEP_DAILY" \
+        --keep-weekly "$KEEP_WEEKLY" --keep-monthly "$KEEP_MONTHLY"
+    R check --read-data-subset=2%
+    size=$(R stats --mode raw-data 2>/dev/null | tail -1)
+    log "backup ok - $size"
+    notify "Backup ok ($size)" normal
+else
+    log "ERRO: o backup falhou"
+    notify "O backup falhou; veja $LOG" critical
+    exit 1
+fi
