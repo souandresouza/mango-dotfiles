@@ -258,9 +258,15 @@ If you prefer to set things up manually:
 sudo pacman -S --needed - < lista_pacman.txt
 yay -S --needed - < lista_aur.txt
 
-# 2. Link configs with stow
+# 2. Copy configs into ~/.config
+#    Cópia, não symlink (nada de stow aqui): symlink quebra se o repo for
+#    movido, some em backup/rsync e confunde quem abre o arquivo pelo
+#    editor. É a mesma coisa que o install.sh faz.
 mkdir -p ~/.config
-stow -d ~/mango-dotfiles -t ~/.config mango waybar swaylock swayidle swaync fuzzel kitty cava cmus fastfetch gtk-3.0 gtk-4.0 zathura nwg-look
+for cfg in mango waybar swaylock swayidle swaync fuzzel kitty cava cmus \
+           fastfetch gtk-3.0 gtk-4.0 zathura nwg-look; do
+    [ -d "$cfg" ] && cp -r "$cfg" ~/.config/
+done
 
 # 3. Copy wallpapers & scripts (scripts vão para ~/.local/bin)
 cp -r wallpapers ~/Pictures/
@@ -370,7 +376,7 @@ sudo systemctl enable --now NetworkManager
 | Waybar not starting | Ensure `waybar-git` is installed from AUR |
 | Colors not applying | Run `~/.local/bin/sequencia.sh` (reaplica todas as cores do pywal) |
 | Fonts missing | Install a nerd-font package: `sudo pacman -S ttf-nerd-fonts-symbols` |
-| Stow conflicts | Run `stow --adopt --force -d ~/mango-dotfiles -t ~/.config <package>` |
+| Config local divergiu do repo | Copie de volta: `cp -r <pacote> ~/.config/`. O repo é a fonte; editar direto em `~/.config` perde no próximo `install.sh` |
 | MangoWM not found | Ensure `mangowm-git` is installed from AUR |
 | Notifications not showing | Check if `swaync` is running: `pgrep swaync` |
 | Screenshot of a window fails | Needs a focused client; `get focusing-client` returns nothing if none |
