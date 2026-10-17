@@ -189,8 +189,8 @@ main() {
     # Cria cópia do wallpaper
     cp "$SELECTED" "$CURRENT_WALLPAPER" 2>/dev/null || true
 
-    # sequencia.sh roda o pywal (wal -i) e depois os 9 scripts de cor, que
-    # escrevem os arquivos de tema de cada app e os recarregam.
+    # sequencia.sh gera a paleta (ruwall) e depois chama os 10 scripts de cor,
+    # que escrevem os arquivos de tema de cada app e os recarregam.
     "$HOME/.local/bin/sequencia.sh" "$SELECTED"
     echo "✨ Concluído!" >&2
 }
