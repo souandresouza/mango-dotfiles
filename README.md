@@ -275,7 +275,66 @@ cp user-dirs.dirs user-dirs.locale ~/.config/
 
 ---
 
-## 🔧 Post-Install
+## 💾 Backup
+
+`scripts/backup.sh` (vai para `~/.local/bin/`) faz backup do `~` e do
+`/etc` num disco externo com **restic**, criptografado, com verificação de
+integridade e retenção (6 horários, 7 diários, 4 semanais, 6 mensais).
+
+O script recusa rodar se o disco não estiver montado — sem isso, um
+backing off do USB deixaria o restic gravar o backup no disco local.
+
+### Primeira configuração
+
+```bash
+sudo pacman -S --needed restic
+
+# disco externo formatado em ext4 e montado em /mnt/backup, com entrada
+# no /etc/fstab pelo UUID (sobrevive a reboot)
+sudo chown $USER /mnt/backup
+
+mkdir -p ~/.config/restic
+openssl rand -base64 32 > ~/.config/restic/key
+chmod 600 ~/.config/restic/key
+restic -r /mnt/backup/restic-repo --password-file ~/.config/restic/key init
+```
+
+Guarde a chave num gerenciador de senhas. Sem ela o backup é ilegível,
+mesmo que o disco externo esteja intacto.
+
+### Agendamento
+
+Unidades de systemd de usuário, em `~/.config/systemd/user/`:
+
+```bash
+systemctl --user enable --now backup.timer
+systemctl --user list-timers backup.timer    # confere a próxima execução
+```
+
+Roda uma vez ao dia, às 23h (as 04:30 o notebook está desligado).
+Para mudar o horário, edite `OnCalendar` — **uma entrada por horário**;
+`OnCalendar=*-*-* 04:30,17:30` não funciona, o systemd lê a vírgula como
+separador de hora/minuto e vira `04:17:30`. Confira sempre com
+`systemd-analyze calendar "*-*-* 23:00"` antes do `daemon-reload`.
+
+`Persistent=true` faz o que foi perdido rodar quando a máquina ligar
+depois — mas não cobre o disco externo ausente, nesse caso o
+`ExecCondition` pula em silêncio.
+
+### Uso
+
+```bash
+backup.sh                    # roda na mão
+backup.sh --check            # verifica a integridade do repositório
+backup.sh --snapshots        # lista os pontos de restauração
+backup.sh --restore latest   # restaura tudo no diretório atual
+```
+
+> **Limitação:** `/etc` só vai o que o usuário consegue ler. `shadow`,
+> `sudoers` e chaves privadas ficam de fora — um backup de `/etc` só é
+> completo com `sudo`.
+
+---
 
 After running `install.sh`, complete these steps:
 
