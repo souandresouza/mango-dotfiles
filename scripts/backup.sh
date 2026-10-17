@@ -14,7 +14,7 @@ set -uo pipefail
 
 MOUNT_POINT="${BACKUP_MOUNT:-/mnt/backup}"
 REPO="${BACKUP_REPO:-$MOUNT_POINT/restic-repo}"
-KEYFILE="${BACKUP_KEYFILE:-$HOME/.config/restic/repo-key}"
+KEYFILE="${BACKUP_KEYFILE:-$HOME/.config/restic/key}"
 LOG="${BACKUP_LOG:-$HOME/.local/state/restic/backup.log}"
 STATE="$HOME/.local/state/restic"
 LOCK="$STATE/backup.lock"
@@ -39,11 +39,13 @@ KEEP_WEEKLY=4
 KEEP_MONTHLY=6
 
 mkdir -p "$STATE"
-[[ -f "$KEYFILE" ]] || { echo "sem chave em $KEYFILE - rode: restic init --repository-file $KEYFILE" >&2; exit 1; }
+[[ -f "$KEYFILE" ]] || { echo "sem chave em $KEYFILE - rode: openssl rand -base64 32 > $KEYFILE" >&2; exit 1; }
 
-# --repository-file usa a chave do arquivo; sem ela o backup fica
-# ilegível, e sem o arquivo o backup automático não roda sem gente digitando senha.
-R() { restic -r "$REPO" --repository-file "$KEYFILE" "$@"; }
+# --password-file: sem ele o backup agendado para esperando alguém
+# digitar senha. A chave e um openssl rand, gerada uma vez só.
+# --repository-file não serve aqui: ele já traz a localização do
+# repositório e conflita com -r.
+R() { restic -r "$REPO" --password-file "$KEYFILE" "$@"; }
 
 log() {
     local msg="$1"
