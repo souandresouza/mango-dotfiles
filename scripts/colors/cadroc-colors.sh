@@ -18,7 +18,11 @@ COLORS_FILE="$HOME/.cache/wal/colors.css"
 THEME_LIB="$HOME/.local/bin/cadroc_theme.sh"
 
 if [ ! -f "$COLORS_FILE" ]; then
-    echo "ERRO: Arquivo $COLORS_FILE não encontrado!"
+    echo "ERRO: sem paleta em $COLORS_FILE"
+    echo "Gere uma com:"
+    echo "  ~/.local/bin/sequencia.sh            # usa o wallpaper atual"
+    echo "  ~/.local/bin/sequencia.sh <imagem>   # de um arquivo"
+    echo "  (PALETTE_TOOL=wal volta ao pywal)"
     echo "Execute '~/.local/bin/sequencia.sh' para gerar a paleta."
     exit 1
 fi
@@ -63,7 +67,8 @@ for i in 1 2 3 4 5 6; do
 done
 
 if [ -z "$background" ] || [ -z "$foreground" ] || [ -z "$accent" ]; then
-    echo "ERRO: Nenhuma cor extraída."
+    echo "ERRO: a paleta em $COLORS_FILE não tem cores utilizáveis."
+    echo "Regere com: ~/.local/bin/sequencia.sh"
     exit 1
 fi
 

@@ -6,8 +6,15 @@ COLORS_FILE="$HOME/.cache/wal/colors.css"
 FUZZEL_FILE="$HOME/.config/fuzzel/colors-fuzzel.ini"
 
 if [ ! -f "$COLORS_FILE" ]; then
-    echo "ERRO: Arquivo $COLORS_FILE não encontrado!"
-    echo "Execute 'wal -i <wallpaper>' para gerar as cores."
+    echo "ERRO: sem paleta em $COLORS_FILE"
+    echo "Gere uma com:"
+    echo "  ~/.local/bin/sequencia.sh            # usa o wallpaper atual"
+    echo "  ~/.local/bin/sequencia.sh <imagem>   # de um arquivo"
+    echo "  (PALETTE_TOOL=wal volta ao pywal)"
+    echo "Sem paleta em ~/.cache/wal. Gere uma com:"
+    echo "  ~/.local/bin/sequencia.sh            # usa o wallpaper atual"
+    echo "  ~/.local/bin/sequencia.sh <imagem>   # de um arquivo"
+    echo "  (ou PALETTE_TOOL=wal para voltar ao pywal)"
     exit 1
 fi
 
@@ -46,7 +53,8 @@ clean_color() {
 
 # Verificar se as cores foram extraídas
 if [ -z "$color0" ] || [ -z "$background" ] || [ -z "$foreground" ]; then
-    echo "ERRO: Nenhuma cor extraída."
+    echo "ERRO: a paleta em $COLORS_FILE não tem cores utilizáveis."
+    echo "Regere com: ~/.local/bin/sequencia.sh"
     exit 1
 fi
 

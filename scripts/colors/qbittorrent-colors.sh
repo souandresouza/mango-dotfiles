@@ -11,8 +11,15 @@ THEME_DIR="$HOME/.config/qBittorrent/themes/pywal"
 TEMPLATE="$THEME_DIR/stylesheet.qss.tpl"
 
 if [ ! -f "$COLORS_FILE" ]; then
-    echo "ERRO: Arquivo $COLORS_FILE não encontrado!"
-    echo "Execute 'wal -i <wallpaper>' para gerar as cores."
+    echo "ERRO: sem paleta em $COLORS_FILE"
+    echo "Gere uma com:"
+    echo "  ~/.local/bin/sequencia.sh            # usa o wallpaper atual"
+    echo "  ~/.local/bin/sequencia.sh <imagem>   # de um arquivo"
+    echo "  (PALETTE_TOOL=wal volta ao pywal)"
+    echo "Sem paleta em ~/.cache/wal. Gere uma com:"
+    echo "  ~/.local/bin/sequencia.sh            # usa o wallpaper atual"
+    echo "  ~/.local/bin/sequencia.sh <imagem>   # de um arquivo"
+    echo "  (ou PALETTE_TOOL=wal para voltar ao pywal)"
     exit 1
 fi
 
