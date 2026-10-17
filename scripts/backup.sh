@@ -85,9 +85,10 @@ flock -n 9 || { log "outro backup já está rodando"; exit 0; }
 
 # --- o disco precisa estar montado ---------------------------------------
 if ! mountpoint -q "$MOUNT_POINT"; then
-    log "ERRO: $MOUNT_POINT não está montado - backup cancelado"
-    notify "$MOUNT_POINT não está montado; nada foi salvo" critical
-    exit 1
+    # Com o timer diário isso é o caso normal: o disco externo não fica
+    # plugado o tempo todo. Não é falha, e notificar aqui seria spam.
+    log "disco externo ausente em $MOUNT_POINT - pulando (sem alarde)"
+    exit 0
 fi
 command -v restic >/dev/null || { log "ERRO: restic não instalado"; exit 1; }
 
