@@ -259,6 +259,38 @@ copy_configs() {
     fi
 }
 
+setup_loopdetect() {
+    # O loopdetect é um wrapper: o trabalho fica no loop_detect.py, que roda
+    # num venv próprio em ~/.local/share/loopdetect/. Essa parte precisa ser
+    # provisionada aqui - sem ela o script quebra e não dá para recuperar
+    # sozinho, porque o venv não faz parte do repositório.
+    local share="$HOME/.local/share/loopdetect"
+    local src="${SCRIPT_DIR}/scripts/loop_detect.py"
+
+    if [[ ! -f "$src" ]]; then
+        warn "Skipping loopdetect venv (not found): $src"
+        return
+    fi
+    if ! command -v python3 >/dev/null 2>&1; then
+        warn "Skipping loopdetect venv (no python3)"
+        return
+    fi
+
+    run "mkdir -p '$share'"
+    run "cp '$src' '$share/loop_detect.py'"
+
+    if [[ ! -x "$share/venv/bin/python" ]]; then
+        run "python3 -m venv '$share/venv'"
+    fi
+    # numpy é a única dependência; se faltar, instala.
+    if ! "$share/venv/bin/python" -c "import numpy" >/dev/null 2>&1; then
+        run "'$share/venv/bin/pip' install --quiet numpy"
+    fi
+
+    success "Loopdetect venv ready: $share/venv"
+    success "Detector: $share/loop_detect.py"
+}
+
 copy_scripts() {
     header "Copying Scripts"
 
@@ -486,6 +518,7 @@ main() {
     create_directories
     copy_configs
     copy_scripts
+    setup_loopdetect
     copy_assets
     copy_files
     set_permissions

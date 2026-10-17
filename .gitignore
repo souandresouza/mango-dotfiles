@@ -17,6 +17,13 @@ mango/env.local
 opencode/service.json
 cmus/lib.pl
 
+# Python: o código vai versionado (scripts/loop_detect.py), o ambiente não.
+# O venv fica em ~/.local/share/loopdetect/venv, de propósito fora do repo -
+# é o install.sh (setup_loopdetect) que o cria. O detector NUNCA deve ser
+# deixado só na home: se o venv sumir sem o .py, não há de onde recuperar.
+__pycache__/
+*.pyc
+
 # Backups e temporários de config
 *.bak
 *.bak.*
