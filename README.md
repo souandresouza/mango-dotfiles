@@ -17,7 +17,7 @@
 
 ### Layout Switching Demo
 
-![MangoWM layout switching demo](videos/mango-layout-switch.gif)
+![MangoWM layout switching demo](videos/mango-switch.gif)
 
 > *Switching between layouts with cava, cmatrix, tty-clock, and lavat running*
 
