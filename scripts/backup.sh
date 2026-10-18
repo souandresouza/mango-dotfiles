@@ -28,7 +28,6 @@ EXCLUDES=(
     "--exclude=$H/.wine"
     "--exclude=$H/.cargo"
     "--exclude=$H/.local/share/Trash"
-    "--exclude=$H/.mozilla/**/cache2"
     "--exclude=$H/.local/share/flatpak/exports"
     "--exclude=**/node_modules"
     # Tudo daqui pra baixo é conteúdo único do disco local, não duplicata:
@@ -41,6 +40,15 @@ EXCLUDES=(
     # Perfil do Firefox: storage e sqlite reconstruem sozinhos; extensions e
     # widevinecdm sao baixados de novo na hora. Os .sqlite ainda podem estar
     # abertos durante o backup, o que gera estado inconsistente no restore.
+    #
+    # O caminho e ~/.config/mozilla, nao ~/.mozilla - nesta maquina ~/.mozilla
+    # nao existe. Havia um "--exclude=$H/.mozilla/**/cache2" aqui desde o
+    # inicio que nunca pegou nada, alem de cache2 nao ser mais o nome do
+    # cache no Firefox atual: agora e startupCache, coberto pelo padrao
+    # abaixo. O que fica fora do perfil e so cache e plugin - places.sqlite,
+    # favicons, security_state e sessionstore continuam no backup, porque
+    # nao voltam.
+    "--exclude=$H/.config/mozilla/firefox/*/startupCache"
     "--exclude=$H/.config/mozilla/firefox/*/storage"
     "--exclude=$H/.config/mozilla/firefox/*/extensions"
     "--exclude=$H/.config/mozilla/firefox/*/gmp-widevinecdm"
