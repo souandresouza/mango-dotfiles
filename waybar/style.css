@@ -22,7 +22,8 @@ window#waybar {
 #clock,
 #layout,
 #pulseaudio,
-#battery {
+#battery,
+#tray {
     background: @background;
     color: @foreground;
     margin: 0px 2px;
@@ -32,6 +33,20 @@ window#waybar {
     padding: 0 10px;
     min-width: 20px;
     transition: all 0.2s ease;
+}
+/* Os icones do tray vem desenhados pelo proprio aplicativo, no tamanho
+ * que ele quiser. Sem reduzir, eles ficam maiores que a fonte de 16px dos
+ * outros modulos e estouram a barra de 26px. */
+#tray {
+    padding: 0 6px;
+}
+#tray > .passive,
+#tray > .inactive,
+#tray > .needs-attention {
+    background: transparent;
+    border: none;
+    margin: 0 2px;
+    padding: 0;
 }
 #window,
 #custom-window {
