@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Wrapper do image_dup.py usando o mesmo venv do loopdetect (fora do /tmp).
+set -euo pipefail
+VENV="$HOME/.local/share/loopdetect/venv"
+SCRIPT="${IMAGEDUP_PY:-$HOME/.local/share/loopdetect/image_dup.py}"
+[ -f "$SCRIPT" ] || SCRIPT="$(dirname "$(readlink -f "$0")")/image_dup.py"
+exec "$VENV/bin/python" -u "$SCRIPT" "$@"
