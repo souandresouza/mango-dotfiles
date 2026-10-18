@@ -82,6 +82,7 @@
         "clock"
     ],
     "modules-right": [
+        "tray",
         "pulseaudio",
         "battery"
     ]
