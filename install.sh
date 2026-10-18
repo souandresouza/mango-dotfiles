@@ -264,8 +264,14 @@ setup_loopdetect() {
     # num venv próprio em ~/.local/share/loopdetect/. Essa parte precisa ser
     # provisionada aqui - sem ela o script quebra e não dá para recuperar
     # sozinho, porque o venv não faz parte do repositório.
+    #
+    # O imagedup (image_dup.py) mora no MESMO venv e usa as mesmas
+    # dependências - ffmpeg + numpy -, então sai de graça aqui. O atalho
+    # SUPER+SHIFT+D aponta para o imagedup_gui.sh, que é um scripts/*.sh
+    # comum e o copy_scripts() leva junto.
     local share="$HOME/.local/share/loopdetect"
     local src="${SCRIPT_DIR}/scripts/loop_detect.py"
+    local src_img="${SCRIPT_DIR}/scripts/image_dup.py"
 
     if [[ ! -f "$src" ]]; then
         warn "Skipping loopdetect venv (not found): $src"
@@ -279,6 +285,9 @@ setup_loopdetect() {
     run "mkdir -p '$share'"
     run "cp '$src' '$share/loop_detect.py'"
 
+    if [[ -f "$src_img" ]]; then
+        run "cp '$src_img' '$share/image_dup.py'"
+    fi
     if [[ ! -x "$share/venv/bin/python" ]]; then
         run "python3 -m venv '$share/venv'"
     fi
@@ -289,6 +298,11 @@ setup_loopdetect() {
 
     success "Loopdetect venv ready: $share/venv"
     success "Detector: $share/loop_detect.py"
+    # if em vez de "&&": com set -e, um "test && cmd" que falha devolve 1 e
+    # derrubaria o instalador inteiro.
+    if [[ -f "$share/image_dup.py" ]]; then
+        success "Duplicatas: $share/image_dup.py"
+    fi
 }
 
 copy_scripts() {
