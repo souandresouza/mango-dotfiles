@@ -31,6 +31,37 @@ EXCLUDES=(
     "--exclude=$H/.mozilla/**/cache2"
     "--exclude=$H/.local/share/flatpak/exports"
     "--exclude=**/node_modules"
+    # Tudo daqui pra baixo é conteúdo único do disco local, não duplicata:
+    # ao excluir, o espaço sai de verdade do repo. (Duplicata byte-idêntica -
+    # mesmo arquivo em duas pastas - já é deduplicada pelo restic por hash, e
+    # excluí-la não liberaria nada.)
+    #
+    # venv: reinstala com um pip install a partir do requirements.
+    "--exclude=$H/.local/share/loopdetect/venv"
+    # Perfil do Firefox: storage e sqlite reconstruem sozinhos; extensions e
+    # widevinecdm sao baixados de novo na hora. Os .sqlite ainda podem estar
+    # abertos durante o backup, o que gera estado inconsistente no restore.
+    "--exclude=$H/.config/mozilla/firefox/*/storage"
+    "--exclude=$H/.config/mozilla/firefox/*/extensions"
+    "--exclude=$H/.config/mozilla/firefox/*/gmp-widevinecdm"
+    # GeoDB do qBittorrent: base de geolocalizacao, o app refaz o download.
+    "--exclude=$H/.local/share/qBittorrent/GeoDB"
+    # WAL do SQLite: e um arquivo temporario, transico entre checkpoints.
+    # O .db em si fica - tem historico que nao volta.
+    "--exclude=$H/.local/share/opencode/opencode.db-wal"
+    # .git dos repos que tem remoto: o mesmo historico ja existe la, entao
+    # levar o .git e guardar o mesmo dado duas vezes.
+    #
+    # A lista e explicita, nao "**/.git". O padrao largo pegava tambem
+    # repos que so existem aqui - e um --exclude desses e definitivo, nao ha
+    # como reverter depois que o backup rodar. Todos os 10 .git da home tem
+    # remoto hoje, mas isso pode mudar, e o backup de amanha nao deve
+    # depender disso.
+    "--exclude=$H/mango-dotfiles/.git"
+    "--exclude=$H/cadrocfile/.git"
+    "--exclude=$H/ruwall/.git"
+    # O .git do cache do yay nao entra mesmo, porque o $H/.cache acima ja
+    # exclui a pasta inteira.
 )
 # /etc tem arquivos root-only (shadow, sudoers, chaves privadas). Um backup
 # não roda como root, então eles não são legíveis - e o restic devolve o
@@ -66,7 +97,17 @@ mkdir -p "$STATE"
 # digitar senha. A chave e um openssl rand, gerada uma vez só.
 # --repository-file não serve aqui: ele já traz a localização do
 # repositório e conflita com -r.
+#
+# Duas esperas distintas, porque espera longa faz sentido numa coisa e
+# não na outra. O backup precisa do retry longo: ele roda às 23h sem
+# ninguém olhando, e um lock passageiro de outro processo não deve
+# reprovar o backup inteiro. O check é o contrario - é rodado na mão,
+# na frente de alguém, e esperar 5 minutos por um lock orfao parece
+# travamento. Lock orfao é comum depois de um processo interrompido no
+# meio, que nao consegue soltar o lock; nesses casos o certo e avisar
+# rapido e deixar a pessoa rodar o unlock.
 R() { restic -r "$REPO" --password-file "$KEYFILE" --retry-lock=5m "$@"; }
+C() { restic -r "$REPO" --password-file "$KEYFILE" --retry-lock=20s "$@"; }
 
 log() {
     local msg="$1"
@@ -95,8 +136,9 @@ command -v restic >/dev/null || { log "ERRO: restic não instalado"; exit 1; }
 case "${1:-}" in
 --check)
     log "verificando a integridade do repositório..."
-    R check --read-data-subset=5% && log "repositório íntegro" && exit 0
-    log "ERRO: repositório com problema"; exit 1
+    C check --read-data-subset=5% && log "repositório íntegro" && exit 0
+    log "ERRO: repositório com problema (se a causa for lock, rode: restic -r $REPO --password-file $KEYFILE unlock)"
+    exit 1
     ;;
 --snapshots)
     R snapshots; exit 0
@@ -142,7 +184,7 @@ R forget --prune \
 # O check precisa de retorno proprio: uma vez ele falhou por trava obsoleta e
 # o script ainda anunciou "backup ok", que e exatamente o que nao deve
 # acontecer - backup nao verificado nao e backup.
-if ! R check --read-data-subset=2%; then
+if ! C check --read-data-subset=2%; then
     log "ERRO: o repositorio nao passou no check - o backup existe mas nao e confiavel"
     notify "Check do repositorio falhou; veja $LOG" critical
     exit 1
